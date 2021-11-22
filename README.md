@@ -1,4 +1,4 @@
-# ReactJS Satellite Tracker
+# Satellite and Waste Tracker
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/bbcec464-1ddc-48ae-8c8c-251c0db3fbc3/deploy-status)](https://app.netlify.com/sites/spacejunk-project/deploys)
 
