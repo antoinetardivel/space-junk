@@ -164,7 +164,7 @@ export class Engine {
 
     if (!this.orbitMaterial) {
       this.orbitMaterial = new THREE.LineBasicMaterial({
-        color: 0x999999,
+        color: 0x243984,
         opacity: 1.0,
         transparent: true,
       });
@@ -265,29 +265,29 @@ export class Engine {
     this.selectedMaterial = new THREE.SpriteMaterial({
       map: this._satelliteSprite,
       color: new THREE.Color("#416BFF"),
-      sizeAttenuation: false,
+      sizeAttenuation: true,
     });
     this.highlightedMaterial = new THREE.SpriteMaterial({
       map: this._satelliteSprite,
       color: new THREE.Color("#fca300"),
-      sizeAttenuation: false,
+      sizeAttenuation: true,
     });
     this.material = new THREE.SpriteMaterial({
       map: this._satelliteSprite,
       color: color,
-      sizeAttenuation: false,
+      sizeAttenuation: true,
     });
   };
 
   _getSatelliteSprite = (color: THREE.Color, size: number) => {
-    const SpriteScaleFactor = 5000;
+    const SpriteScaleFactor = 4;
 
     this._setupSpriteMaterials(color);
 
     const result = new THREE.Sprite(
       this.material as THREE.SpriteMaterial | undefined
     );
-    result.scale.set(size / SpriteScaleFactor, size / SpriteScaleFactor, 1);
+    result.scale.set(size * SpriteScaleFactor, size * SpriteScaleFactor, 1);
     return result;
   };
 

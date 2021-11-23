@@ -28,6 +28,9 @@ class Earth extends Component {
   private engine: Engine | null = null;
   private el: HTMLDivElement | null = null;
   public state: IState;
+  private orbitTime: Date | null = null;
+  private elapsedTime: number = 0;
+  private clock: THREE.Clock | null = null;
 
   constructor(props: any) {
     super(props);
@@ -51,8 +54,12 @@ class Earth extends Component {
         onStationClicked: this.handleStationClicked,
       });
       this.addStations();
-
-      setInterval(this.handleTimer, 1000);
+      if (!this.clock) {
+        this.clock = new THREE.Clock();
+      }
+      // setInterval(this.handleTimer, 1000);
+      this.orbitTime = new Date();
+      requestAnimationFrame(this.handleTimer);
     } else {
       console.log("Container is not defined");
     }
@@ -139,18 +146,30 @@ class Earth extends Component {
         new THREE.Color("#ffffff")
       )
       .then((stations: IStation[] | undefined) => {
-        if (stations) {
-          console.log(stations);
+        if (stations)
           this.setState({
             stations: stations,
             totalObjects: stations.length,
           });
-        }
       });
   };
 
   handleTimer = () => {
-    this.engine?.updateAllPositions(new Date());
+    let interval = 1 / 30;
+    if (this.orbitTime) {
+      if (this.clock) {
+        this.elapsedTime += this.clock.getDelta();
+        console.log(this.clock.getElapsedTime());
+
+        if (this.elapsedTime > interval) {
+          console.log("rest");
+          this.orbitTime.setSeconds(this.orbitTime.getSeconds() + 0);
+          this.engine?.updateAllPositions(this.orbitTime);
+          this.elapsedTime = this.elapsedTime % interval;
+        }
+      }
+      requestAnimationFrame(this.handleTimer);
+    }
   };
 
   handleSearchResultClick = (station: IStation) => {
