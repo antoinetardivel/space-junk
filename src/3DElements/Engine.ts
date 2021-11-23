@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import earthmap from "../assets/earthtexture.jpg";
+// import earthmap from "../assets/earthtexture.jpg";
 import circle from "../assets/circle.png";
 import {
   parseTleFile,
@@ -387,7 +387,7 @@ export class Engine {
   // __ Scene contents ______________________________________________________
 
   _addEarth = () => {
-    const textLoader = new THREE.TextureLoader();
+    // const textLoader = new THREE.TextureLoader();
 
     const group = new THREE.Group();
 
