@@ -8,7 +8,7 @@ interface IInfo {
 const Info: React.FC<IInfo> = ({ totalObjects }) => {
   return (
     <div className="Info">
-      <h1>Satellite tracker</h1>
+      <h1>spacefunk</h1>
       <p>Total objects: {totalObjects}</p>
     </div>
   );

@@ -7,8 +7,8 @@ ReactJS web application for tracking satellites using [Celestrak](https://celest
 
 ## Getting Started
 
-    $ git clone https://github.com/ophusdev/satellite-tracker
-    $ cd satellite-tracker
+    $ git clone https://github.com/ophusdev/spacefunk
+    $ cd spacefunk
     $ npm install
     $ npm start
 

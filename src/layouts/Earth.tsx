@@ -110,7 +110,7 @@ class Earth extends Component {
     });
 
     this.engine?.removeSatellite(station);
-    this.engine?.addSatellite(station, new THREE.Color("#ff0000"), 50);
+    this.engine?.addSatellite(station, new THREE.Color("#416BFF"), 50);
     this.engine?.addOrbit(station);
     this.handleTimer();
   };
@@ -202,7 +202,7 @@ class Earth extends Component {
     }
 
     filter_stations.map((station) =>
-      this.engine?.addSatellite(station, new THREE.Color("#ff0000"), 50)
+      this.engine?.addSatellite(station, new THREE.Color("#416BFF"), 50)
     );
 
     this.setState({

@@ -16,7 +16,7 @@ const ixpdotp = 1440 / (2.0 * 3.141592654);
 let TargetDate = new Date();
 
 const defaultOptions = {
-  backgroundColor: 0x333340,
+  backgroundColor: 0x000000,
   defaultSatelliteColor: new THREE.Color("#ffffff"),
   onStationClicked: null,
 };
@@ -264,7 +264,7 @@ export class Engine {
 
     this.selectedMaterial = new THREE.SpriteMaterial({
       map: this._satelliteSprite,
-      color: new THREE.Color("#ff0000"),
+      color: new THREE.Color("#416BFF"),
       sizeAttenuation: false,
     });
     this.highlightedMaterial = new THREE.SpriteMaterial({
@@ -392,13 +392,14 @@ export class Engine {
     const group = new THREE.Group();
 
     // Planet
-    let geometry = new THREE.SphereGeometry(earthRadius, 50, 50);
+    let geometry = new THREE.SphereGeometry(earthRadius, 15, 15);
     let material = new THREE.MeshPhongMaterial({
-      //color: 0x156289,
+      wireframe: true,
+      color: 0x7f7f7f,
       //emissive: 0x072534,
       //   side: THREE.DoubleSide,
       flatShading: false,
-      map: textLoader.load(earthmap, this.render),
+      // map: textLoader.load(earthmap, this.render),
     });
 
     const earth = new THREE.Mesh(geometry, material);

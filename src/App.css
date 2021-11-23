@@ -5,7 +5,7 @@ body, h1, h2, p, div, span, li, ul {
 }
 
 body {
-  background-color: #333340;
+  background-color: black;
   color: white;
   font-family: Montserrat, sans-serif;
   font-size: 12px;
@@ -197,7 +197,7 @@ h1 {
 
 .preview__description {
   line-height: 1.5rem;
-  color: #484848;
+  color: black;
 }
 
 .preview__picture {
