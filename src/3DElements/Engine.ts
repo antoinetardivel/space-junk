@@ -8,6 +8,7 @@ import {
   getAngleFromTle,
 } from "../utils/parseTle";
 import { earthRadius } from "satellite.js/lib/constants";
+import { IStation, IStationOptions } from "../types/models";
 
 const SatelliteSize = 50;
 const ixpdotp = 1440 / (2.0 * 3.141592654);
@@ -16,7 +17,7 @@ let TargetDate = new Date();
 
 const defaultOptions = {
   backgroundColor: 0x333340,
-  defaultSatelliteColor: 0xff0000,
+  defaultSatelliteColor: new THREE.Color("#ffffff"),
   onStationClicked: null,
 };
 
@@ -26,9 +27,24 @@ const defaultStationOptions = {
 };
 
 export class Engine {
-  stations = [];
+  private el: HTMLDivElement | null = null;
+  private raycaster: THREE.Raycaster | null = null;
+  private options: any = {};
+  private controls: OrbitControls | null = null;
+  private renderer: THREE.WebGLRenderer | null = null;
+  private camera: THREE.PerspectiveCamera | null = null;
+  private earth: THREE.Mesh | THREE.Group | null = null;
+  private geometry: THREE.BufferGeometry | null = null;
+  private material: THREE.MeshPhongMaterial | THREE.SpriteMaterial | null =
+    null;
+  private scene: THREE.Scene | null = null;
+  private _satelliteSprite: THREE.Texture | null = null;
+  private selectedMaterial: THREE.SpriteMaterial | null = null;
+  private highlightedMaterial: THREE.SpriteMaterial | null = null;
+  private orbitMaterial: THREE.LineBasicMaterial | null = null;
+  private stations: IStation[] = [];
 
-  initialize(container, options = {}) {
+  initialize(container: HTMLDivElement, options = {}) {
     this.el = container;
     this.raycaster = new THREE.Raycaster();
     this.options = { ...defaultOptions, ...options };
@@ -50,35 +66,39 @@ export class Engine {
 
     this.raycaster = null;
     this.el = null;
-    this.controls.dispose();
+    this.controls?.dispose();
   }
 
   handleWindowResize = () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    this.renderer.setSize(width, height);
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();
+    this.renderer?.setSize(width, height);
+    if (this.camera) {
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+    }
 
     this.render();
   };
 
-  handleMouseDown = (e) => {
+  handleMouseDown = (e: PointerEvent) => {
     const mouse = new THREE.Vector2(
       (e.clientX / window.innerWidth) * 2 - 1,
       -(e.clientY / window.innerHeight) * 2 + 1
     );
 
-    this.raycaster.setFromCamera(mouse, this.camera);
+    if (this.camera) this.raycaster?.setFromCamera(mouse, this.camera);
 
     let station = null;
-
-    let intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    if (intersects && intersects.length > 0) {
-      const picked = intersects[0].object;
-      if (picked) {
-        station = this._findStationFromMesh(picked);
+    if (this.scene) {
+      let intersects: THREE.Intersection[] | undefined =
+        this.raycaster?.intersectObjects(this.scene.children, true);
+      if (intersects && intersects.length > 0) {
+        const picked = intersects[0].object;
+        if (picked) {
+          station = this._findStationFromMesh(picked);
+        }
       }
     }
 
@@ -88,7 +108,7 @@ export class Engine {
 
   // __ API _________________________________________________________________
 
-  addSatellite = (station, color, size) => {
+  addSatellite = (station: IStation, color: THREE.Color, size: number) => {
     const sat = this._getSatelliteSprite(color, size);
     const pos = this._getSatellitePositionFromTle(station);
     const geoCoords = this._getAngleFromTle(station);
@@ -96,25 +116,33 @@ export class Engine {
 
     sat.position.set(pos.x, pos.y, pos.z);
     station.mesh = sat;
-    station.geoCoords = geoCoords;
+    station.geoCoords = geoCoords as {
+      height: number;
+      latitude: number;
+      longitude: number;
+    };
 
     this.stations.push(station);
 
     if (station.orbitMinutes > 0) this.addOrbit(station);
 
-    this.earth.add(sat);
+    this.earth?.add(sat);
   };
 
-  removeSatellite = (station) => {
-    this.earth.remove(station.mesh);
+  removeSatellite = (station: IStation) => {
+    this.earth?.remove(station.mesh);
     this.removeOrbit(station);
   };
 
-  removeAllSatellites = (stations) => {
+  removeAllSatellites = (stations: IStation[]) => {
     stations.map((station) => this.removeSatellite(station));
   };
 
-  loadLteFileStations = async (url, color, stationOptions) => {
+  loadLteFileStations = async (
+    url: string,
+    color: THREE.Color,
+    stationOptions?: IStationOptions
+  ) => {
     const options = { ...defaultStationOptions, ...stationOptions };
 
     return fetch(url).then((res) => {
@@ -126,7 +154,7 @@ export class Engine {
     });
   };
 
-  addOrbit = (station) => {
+  addOrbit = (station: IStation) => {
     if (station.orbitMinutes > 0) return;
 
     const revsPerDay = station.satrec.no * ixpdotp;
@@ -156,31 +184,38 @@ export class Engine {
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     let orbitCurve = new THREE.Line(geometry, this.orbitMaterial);
     station.orbit = orbitCurve;
-    station.mesh.material = this.selectedMaterial;
+    if (this.selectedMaterial) station.mesh.material = this.selectedMaterial;
 
-    this.earth.add(orbitCurve);
+    this.earth?.add(orbitCurve);
     this.render();
   };
 
-  removeOrbit = (station) => {
+  removeOrbit = (station: IStation) => {
     if (!station || !station.orbit) return;
 
-    this.earth.remove(station.orbit);
+    this.earth?.remove(station.orbit);
     station.orbit.geometry.dispose();
     station.orbit = null;
-    station.mesh.material = this.material;
+    if (this.material)
+      station.mesh.material = this.material as THREE.SpriteMaterial;
     this.render();
   };
 
-  highlightStation = (station) => {
-    station.mesh.material = this.highlightedMaterial;
+  highlightStation = (station: IStation) => {
+    if (this.highlightedMaterial)
+      station.mesh.material = this.highlightedMaterial;
   };
 
-  clearStationHighlight = (station) => {
-    station.mesh.material = this.material;
+  clearStationHighlight = (station: IStation) => {
+    if (this.material)
+      station.mesh.material = this.material as THREE.SpriteMaterial;
   };
 
-  _addTleFileStations = async (lteFileContent, color, stationOptions) => {
+  _addTleFileStations = async (
+    lteFileContent: string,
+    color: THREE.Color,
+    stationOptions: any
+  ) => {
     const stations = parseTleFile(lteFileContent, stationOptions);
 
     const { satelliteSize } = stationOptions;
@@ -205,7 +240,7 @@ export class Engine {
     return stations;
   };
 
-  _getSatelliteMesh = (color, size) => {
+  _getSatelliteMesh = (color: THREE.Color, size: number) => {
     color = color || this.options.defaultSatelliteColor;
     size = size || SatelliteSize;
 
@@ -213,27 +248,28 @@ export class Engine {
       this.geometry = new THREE.BoxBufferGeometry(size, size, size);
       this.material = new THREE.MeshPhongMaterial({
         color: color,
-        emissive: 0xff4040,
+        emissive: new THREE.Color("#ff4040"),
         flatShading: false,
         side: THREE.DoubleSide,
       });
     }
-
-    return new THREE.Mesh(this.geometry, this.material);
+    if (this.material) return new THREE.Mesh(this.geometry, this.material);
+    return null;
   };
 
-  _setupSpriteMaterials = (color) => {
+  _setupSpriteMaterials = (color: THREE.Color) => {
     if (this.material) return;
 
     this._satelliteSprite = new THREE.TextureLoader().load(circle, this.render);
+
     this.selectedMaterial = new THREE.SpriteMaterial({
       map: this._satelliteSprite,
-      color: 0xff0000,
+      color: new THREE.Color("#ff0000"),
       sizeAttenuation: false,
     });
     this.highlightedMaterial = new THREE.SpriteMaterial({
       map: this._satelliteSprite,
-      color: 0xfca300,
+      color: new THREE.Color("#fca300"),
       sizeAttenuation: false,
     });
     this.material = new THREE.SpriteMaterial({
@@ -243,27 +279,29 @@ export class Engine {
     });
   };
 
-  _getSatelliteSprite = (color, size) => {
+  _getSatelliteSprite = (color: THREE.Color, size: number) => {
     const SpriteScaleFactor = 5000;
 
     this._setupSpriteMaterials(color);
 
-    const result = new THREE.Sprite(this.material);
+    const result = new THREE.Sprite(
+      this.material as THREE.SpriteMaterial | undefined
+    );
     result.scale.set(size / SpriteScaleFactor, size / SpriteScaleFactor, 1);
     return result;
   };
 
-  _getSatellitePositionFromTle = (station, date) => {
+  _getSatellitePositionFromTle = (station: IStation, date?: Date) => {
     date = date || TargetDate;
     return getPositionFromTle(station, date);
   };
 
-  _getAngleFromTle = (station, date) => {
+  _getAngleFromTle = (station: IStation, date?: Date) => {
     date = date || TargetDate;
     return getAngleFromTle(station, date);
   };
 
-  updateSatellitePosition = (station, date) => {
+  updateSatellitePosition = (station: IStation, date: Date) => {
     date = date || TargetDate;
 
     const pos = getPositionFromTle(station, date);
@@ -272,7 +310,7 @@ export class Engine {
     station.mesh.position.set(pos.x, pos.y, pos.z);
   };
 
-  updateAllPositions = (date) => {
+  updateAllPositions = (date: Date) => {
     if (!this.stations) return;
 
     this.stations.forEach((station) => {
@@ -285,34 +323,44 @@ export class Engine {
   // __ Scene _______________________________________________________________
 
   _setupScene = () => {
-    const width = this.el.clientWidth;
-    const height = window.innerHeight;
+    if (this.el) {
+      const width = this.el.clientWidth;
+      const height = window.innerHeight;
 
-    this.scene = new THREE.Scene();
+      this.scene = new THREE.Scene();
 
-    this._setupCamera(width, height);
+      this._setupCamera(width, height);
 
-    this.renderer = new THREE.WebGLRenderer({
-      logarithmicDepthBuffer: true,
-      antialias: true,
-    });
+      this.renderer = new THREE.WebGLRenderer({
+        logarithmicDepthBuffer: true,
+        antialias: true,
+      });
 
-    this.renderer.setClearColor(new THREE.Color(this.options.backgroundColor));
-    this.renderer.setSize(width, height);
+      this.renderer.setClearColor(
+        new THREE.Color(this.options.backgroundColor)
+      );
+      this.renderer.setSize(width, height);
 
-    this.el.appendChild(this.renderer.domElement);
+      this.el.appendChild(this.renderer.domElement);
+    } else {
+      console.log("Container is not defined");
+    }
   };
 
-  _setupCamera(width, height) {
-    let NEAR = 1e-6,
-      FAR = 1e27;
-    this.camera = new THREE.PerspectiveCamera(54, width / height, NEAR, FAR);
-    this.controls = new OrbitControls(this.camera, this.el);
-    this.controls.enablePan = false;
-    this.controls.addEventListener("change", () => this.render());
-    this.camera.position.z = -15000;
-    this.camera.position.x = 15000;
-    this.camera.lookAt(0, 0, 0);
+  _setupCamera(width: number, height: number) {
+    if (this.el) {
+      let NEAR = 1e-6,
+        FAR = 1e27;
+      this.camera = new THREE.PerspectiveCamera(54, width / height, NEAR, FAR);
+      this.controls = new OrbitControls(this.camera, this.el);
+      this.controls.enablePan = false;
+      this.controls.addEventListener("change", () => this.render());
+      this.camera.position.z = -15000;
+      this.camera.position.x = 15000;
+      this.camera.lookAt(0, 0, 0);
+    } else {
+      console.log("Container is not defined");
+    }
   }
 
   _setupLights = () => {
@@ -322,8 +370,8 @@ export class Engine {
 
     const ambient = new THREE.AmbientLight(0x909090);
 
-    this.scene.add(sun);
-    this.scene.add(ambient);
+    this.scene?.add(sun);
+    this.scene?.add(ambient);
   };
 
   _addBaseObjects = () => {
@@ -331,7 +379,8 @@ export class Engine {
   };
 
   render = () => {
-    this.renderer.render(this.scene, this.camera);
+    if (this.scene && this.camera)
+      this.renderer?.render(this.scene, this.camera);
     //this.requestID = window.requestAnimationFrame(this._animationLoop);
   };
 
@@ -367,10 +416,10 @@ export class Engine {
     // group.add(earthRotationAxis);
 
     this.earth = group;
-    this.scene.add(this.earth);
+    this.scene?.add(this.earth);
   };
 
-  _findStationFromMesh = (threeObject) => {
+  _findStationFromMesh = (threeObject: THREE.Object3D<THREE.Event>) => {
     for (let i = 0; i < this.stations.length; ++i) {
       const s = this.stations[i];
 

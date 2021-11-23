@@ -1,7 +1,15 @@
 import React from "react";
+import { IStation } from "../types/models";
 import { StationPreview } from "./SearchResults";
 
-const SelectedStations = ({
+interface ISelectedStations {
+  selected: IStation[];
+  onRemoveStation: (station: IStation) => void;
+  onRemoveAll: () => void;
+  onStationClick: (station:any) => void;
+}
+
+const SelectedStations: React.FC<ISelectedStations> = ({
   selected,
   onRemoveStation,
   onRemoveAll,

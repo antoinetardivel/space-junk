@@ -1,9 +1,15 @@
 import React, { useState } from "react";
+import { IStation } from "../types/models";
 import SearchResults from "./SearchResults";
 
-const Search = ({ stations, onResultClick }) => {
+interface ISearch {
+  stations: IStation[];
+  onResultClick: (station: IStation) => void;
+}
+
+const Search: React.FC<ISearch> = ({ stations, onResultClick }) => {
   const [search, setSearch] = useState("");
-  const handleSearchChanged = (event) => {
+  const handleSearchChanged = (event: any) => {
     setSearch(event.target.value);
   };
   return (

@@ -1,6 +1,8 @@
 import React from "react";
-
-const FastFilter = ({ onResultClick }) => {
+interface IFastFilter {
+  onResultClick: (result: string) => void;
+}
+const FastFilter: React.FC<IFastFilter> = ({ onResultClick }) => {
   return (
     <div>
       <div className={"FastFilter"}>

@@ -1,6 +1,11 @@
 import React from "react";
+import { totalObjects } from "../types/models";
 
-const Info = ({ totalObjects }) => {
+interface IInfo {
+  totalObjects: totalObjects;
+}
+
+const Info: React.FC<IInfo> = ({ totalObjects }) => {
   return (
     <div className="Info">
       <h1>Satellite tracker</h1>

@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import { Component } from "react";
+import * as THREE from "three";
 import { Engine } from "../3DElements/Engine";
 import Search from "../components/Search";
 import Info from "../components/Info";
@@ -6,15 +7,29 @@ import Preview from "../components/Preview";
 import SelectedStations from "../components/SelectedStations";
 import FastFilter from "../components/FastFilter";
 
-import { satellitesInventory } from "../data/satellite.js";
+import { satellitesInventory } from "../data/satellite";
+import { IStation, totalObjects } from "../types/models";
 
 // Bypass CORS
-function getCorsFreeUrl(url) {
+function getCorsFreeUrl(url: string) {
   return "https://api.allorigins.win/raw?url=" + url;
 }
 
+interface IState {
+  selected: IStation[];
+  stations: IStation[];
+  totalObjects: totalObjects;
+  showPreview: boolean;
+  stationInfo: any;
+  stationInventory: any;
+}
+
 class Earth extends Component {
-  constructor(props) {
+  private engine: Engine | null = null;
+  private el: HTMLDivElement | null = null;
+  public state: IState;
+
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -30,20 +45,24 @@ class Earth extends Component {
   }
 
   componentDidMount() {
-    this.engine = new Engine();
-    this.engine.initialize(this.el, {
-      onStationClicked: this.handleStationClicked,
-    });
-    this.addStations();
+    if (this.el) {
+      this.engine = new Engine();
+      this.engine.initialize(this.el, {
+        onStationClicked: this.handleStationClicked,
+      });
+      this.addStations();
 
-    setInterval(this.handleTimer, 1000);
+      setInterval(this.handleTimer, 1000);
+    } else {
+      console.log("Container is not defined");
+    }
   }
 
   componentWillUnmount() {
-    this.engine.dispose();
+    this.engine?.dispose();
   }
 
-  queryStationsByName = (stations, query) => {
+  queryStationsByName = (stations: IStation[], query: string) => {
     query = query.toLowerCase();
 
     let search = stations.filter(
@@ -54,31 +73,33 @@ class Earth extends Component {
     else return search;
   };
 
-  findStationById = (stations, id) => {
-    return stations.find((st) => st.satrec && st.satrec.satnum === id);
+  findStationById = (stations: IStation[], id: number) => {
+    return stations.find((st) => st.satrec && st.satrec.satnum === `${id}`);
   };
 
-  handleStationClicked = (station) => {
+  handleStationClicked = (station: IStation) => {
     if (!station) return;
 
     this.toggleSelection(station);
   };
 
-  toggleSelection(station) {
+  toggleSelection(station: IStation) {
     if (this.isSelected(station)) this.deselectStation(station);
     else this.selectStation(station);
   }
 
-  isSelected = (station) => {
+  isSelected = (station: IStation) => {
     return this.state.selected.includes(station);
   };
 
-  selectStation = (station) => {
+  selectStation = (station: IStation) => {
     const newSelected = this.state.selected.concat(station);
-
-    let stationInventory = satellitesInventory.filter(
-      (st) => st.norad_number === parseInt(station.satrec.satnum)
+    let stationInventory: IStation[] = [];
+    // @ts-ignore
+    stationInventory = satellitesInventory.filter(
+      (st) => (st.norad_number as number) === parseInt(station.satrec.satnum)
     );
+    // @ts-ignore
     if (stationInventory.length > 0) stationInventory = stationInventory[0];
 
     this.setState({
@@ -88,13 +109,19 @@ class Earth extends Component {
       stationInventory: stationInventory,
     });
 
-    this.engine.removeSatellite(station);
-    this.engine.addSatellite(station, "red", 50);
-    this.engine.addOrbit(station);
+    this.engine?.removeSatellite(station);
+    this.engine?.addSatellite(station, new THREE.Color("#ff0000"), 50);
+    this.engine?.addOrbit(station);
     this.handleTimer();
   };
 
-  deselectStation = (station) => {
+  setStationInfo = (station: IStation) => {
+    this.setState({
+      stationInfo: station,
+    });
+  };
+
+  deselectStation = (station: IStation) => {
     const newSelected = this.state.selected.filter((s) => s !== station);
     this.setState({
       selected: newSelected,
@@ -102,46 +129,49 @@ class Earth extends Component {
       showPreview: false,
     });
 
-    this.engine.removeOrbit(station);
+    this.engine?.removeOrbit(station);
   };
 
   addStations = async () => {
     await this.engine
-      .loadLteFileStations(
+      ?.loadLteFileStations(
         getCorsFreeUrl("http://www.celestrak.com/NORAD/elements/active.txt"),
-        0xffffff
+        new THREE.Color("#ffffff")
       )
-      .then((stations) => {
-        this.setState({
-          stations: stations,
-          totalObjects: stations.length,
-        });
+      .then((stations: IStation[] | undefined) => {
+        if (stations) {
+          console.log(stations);
+          this.setState({
+            stations: stations,
+            totalObjects: stations.length,
+          });
+        }
       });
   };
 
   handleTimer = () => {
-    this.engine.updateAllPositions(new Date());
+    this.engine?.updateAllPositions(new Date());
   };
 
-  handleSearchResultClick = (station) => {
+  handleSearchResultClick = (station: IStation) => {
     if (!station) return;
 
     this.toggleSelection(station);
   };
 
-  handleRemoveSelected = (station) => {
+  handleRemoveSelected = (station: IStation) => {
     if (!station) return;
 
     this.deselectStation(station);
   };
 
   handleRemoveAllSelected = () => {
-    this.state.selected.forEach((s) => this.engine.removeOrbit(s));
+    this.state.selected.forEach((s) => this.engine?.removeOrbit(s));
     this.setState({ selected: [] });
   };
 
-  handleFastFilterClick = (filter) => {
-    this.engine.removeAllSatellites(this.state.stations);
+  handleFastFilterClick = (filter: string) => {
+    this.engine?.removeAllSatellites(this.state.stations);
     this.setState({
       selected: [],
     });
@@ -172,7 +202,7 @@ class Earth extends Component {
     }
 
     filter_stations.map((station) =>
-      this.engine.addSatellite(station, "red", 50)
+      this.engine?.addSatellite(station, new THREE.Color("#ff0000"), 50)
     );
 
     this.setState({
@@ -195,10 +225,7 @@ class Earth extends Component {
           stations={stations}
           onResultClick={this.handleSearchResultClick}
         />
-        <FastFilter
-          stations={stations}
-          onResultClick={this.handleFastFilterClick}
-        />
+        <FastFilter onResultClick={this.handleFastFilterClick} />
         <Info totalObjects={this.state.totalObjects} />
         <Preview
           isVisible={this.state.showPreview}
@@ -207,6 +234,7 @@ class Earth extends Component {
           closePreview={this.closePreview}
         />
         <SelectedStations
+          onStationClick={this.setStationInfo}
           selected={selected}
           onRemoveStation={this.handleRemoveSelected}
           onRemoveAll={this.handleRemoveAllSelected}
