@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IStation } from "../types/models";
-import SearchResults from "./SearchResults";
+import SearchResults from "./SearchResults.component";
 
 interface ISearch {
   stations: IStation[];

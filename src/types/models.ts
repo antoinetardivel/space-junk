@@ -9,7 +9,7 @@ export interface IStation {
     latitude: number;
     longitude: number;
   };
-  mesh: THREE.Sprite;
+  mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.RawShaderMaterial>;
   orbitMinutes: number;
   satelliteSize: number;
   satrec: satellite.SatRec;

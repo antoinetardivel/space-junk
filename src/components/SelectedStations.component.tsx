@@ -1,6 +1,6 @@
 import React from "react";
 import { IStation } from "../types/models";
-import { StationPreview } from "./SearchResults";
+import { StationPreview } from "./SearchResults.component";
 
 interface ISelectedStations {
   selected: IStation[];

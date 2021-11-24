@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import Earth from "./layouts/Earth";
+import Earth from "./layouts/Earth.layout";
 
 const App = () => {
   return (

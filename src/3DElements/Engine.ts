@@ -9,6 +9,8 @@ import {
 } from "../utils/parseTle";
 import { earthRadius } from "satellite.js/lib/constants";
 import { IStation, IStationOptions } from "../types/models";
+import flagVertexShader from "../shaders/satellite/vertex.glsl";
+import flagFragmentsShader from "../sharders/satellite/fragments.glsl";
 
 const SatelliteSize = 50;
 const ixpdotp = 1440 / (2.0 * 3.141592654);
@@ -16,7 +18,7 @@ const ixpdotp = 1440 / (2.0 * 3.141592654);
 let TargetDate = new Date();
 
 const defaultOptions = {
-  backgroundColor: 0x000000,
+  backgroundColor: 0x010101,
   defaultSatelliteColor: new THREE.Color("#ffffff"),
   onStationClicked: null,
 };
@@ -35,14 +37,15 @@ export class Engine {
   private camera: THREE.PerspectiveCamera | null = null;
   private earth: THREE.Mesh | THREE.Group | null = null;
   private geometry: THREE.BufferGeometry | null = null;
-  private material: THREE.MeshPhongMaterial | THREE.SpriteMaterial | null =
+  private material: THREE.MeshBasicMaterial | THREE.RawShaderMaterial | null =
     null;
   private scene: THREE.Scene | null = null;
   private _satelliteSprite: THREE.Texture | null = null;
-  private selectedMaterial: THREE.SpriteMaterial | null = null;
-  private highlightedMaterial: THREE.SpriteMaterial | null = null;
+  private selectedMaterial: THREE.RawShaderMaterial | null = null;
+  private highlightedMaterial: THREE.RawShaderMaterial | null = null;
   private orbitMaterial: THREE.LineBasicMaterial | null = null;
   private stations: IStation[] = [];
+  private groupSat: THREE.Group | null = null;
 
   initialize(container: HTMLDivElement, options = {}) {
     this.el = container;
@@ -126,11 +129,11 @@ export class Engine {
 
     if (station.orbitMinutes > 0) this.addOrbit(station);
 
-    this.earth?.add(sat);
+    this.groupSat?.add(sat);
   };
 
   removeSatellite = (station: IStation) => {
-    this.earth?.remove(station.mesh);
+    this.groupSat?.remove(station.mesh);
     this.removeOrbit(station);
   };
 
@@ -186,30 +189,30 @@ export class Engine {
     station.orbit = orbitCurve;
     if (this.selectedMaterial) station.mesh.material = this.selectedMaterial;
 
-    this.earth?.add(orbitCurve);
+    this.groupSat?.add(orbitCurve);
     this.render();
   };
 
   removeOrbit = (station: IStation) => {
     if (!station || !station.orbit) return;
 
-    this.earth?.remove(station.orbit);
+    this.groupSat?.remove(station.orbit);
     station.orbit.geometry.dispose();
     station.orbit = null;
     if (this.material)
-      station.mesh.material = this.material as THREE.SpriteMaterial;
+      station.mesh.material = this.material as THREE.RawShaderMaterial;
     this.render();
   };
 
-  highlightStation = (station: IStation) => {
-    if (this.highlightedMaterial)
-      station.mesh.material = this.highlightedMaterial;
-  };
+  // highlightStation = (station: IStation) => {
+  //   if (this.highlightedMaterial)
+  //     station.mesh.material = this.highlightedMaterial;
+  // };
 
-  clearStationHighlight = (station: IStation) => {
-    if (this.material)
-      station.mesh.material = this.material as THREE.SpriteMaterial;
-  };
+  // clearStationHighlight = (station: IStation) => {
+  //   if (this.material)
+  //     station.mesh.material = this.material as THREE.SpriteMaterial;
+  // };
 
   _addTleFileStations = async (
     lteFileContent: string,
@@ -240,53 +243,81 @@ export class Engine {
     return stations;
   };
 
-  _getSatelliteMesh = (color: THREE.Color, size: number) => {
-    color = color || this.options.defaultSatelliteColor;
-    size = size || SatelliteSize;
+  // _getSatelliteMesh = (color: THREE.Color, size: number) => {
+  //   color = color || this.options.defaultSatelliteColor;
+  //   size = size || SatelliteSize;
 
-    if (!this.geometry) {
-      this.geometry = new THREE.BoxBufferGeometry(size, size, size);
-      this.material = new THREE.MeshPhongMaterial({
-        color: color,
-        emissive: new THREE.Color("#ff4040"),
-        flatShading: false,
-        side: THREE.DoubleSide,
-      });
-    }
-    if (this.material) return new THREE.Mesh(this.geometry, this.material);
-    return null;
-  };
+  //   if (!this.geometry) {
+  //     this.geometry = new THREE.BoxBufferGeometry(size, size, size);
+  //     this.material = new THREE.MeshPhongMaterial({
+  //       color: color,
+  //       emissive: new THREE.Color("#ff4040"),
+  //       flatShading: false,
+  //       side: THREE.DoubleSide,
+  //     });
+  //   }
+  //   if (this.material) return new THREE.Mesh(this.geometry, this.material);
+  //   return null;
+  // };
 
   _setupSpriteMaterials = (color: THREE.Color) => {
     if (this.material) return;
 
     this._satelliteSprite = new THREE.TextureLoader().load(circle, this.render);
+    this._satelliteSprite.minFilter = THREE.NearestFilter;
+    this._satelliteSprite.magFilter = THREE.NearestFilter;
+    this._satelliteSprite.generateMipmaps = false;
 
-    this.selectedMaterial = new THREE.SpriteMaterial({
-      map: this._satelliteSprite,
-      color: new THREE.Color("#416BFF"),
-      sizeAttenuation: true,
+    this.selectedMaterial = new THREE.RawShaderMaterial({
+      vertexShader: ``,
+      fragmentShader: ``,
+      uniforms: {
+        uColor: { value: new THREE.Color("#416bff") },
+      },
     });
-    this.highlightedMaterial = new THREE.SpriteMaterial({
-      map: this._satelliteSprite,
-      color: new THREE.Color("#fca300"),
-      sizeAttenuation: true,
+    this.highlightedMaterial = new THREE.RawShaderMaterial({
+      vertexShader: ``,
+      fragmentShader: ``,
+      uniforms: {
+        uColor: { value: new THREE.Color("#fca300") },
+      },
     });
-    this.material = new THREE.SpriteMaterial({
-      map: this._satelliteSprite,
-      color: color,
-      sizeAttenuation: true,
+    this.material = new THREE.RawShaderMaterial({
+      vertexShader: ``,
+      fragmentShader: ``,
+      uniforms: {
+        uColor: { value: new THREE.Color(color) },
+      },
     });
+    // this.highlightedMaterial = new THREE.MeshBasicMaterial({ color: 0xfca300 });
+    // this.material = new THREE.MeshBasicMaterial({ color: color });
+    // this.selectedMaterial = new THREE.SpriteMaterial({
+    //   map: this._satelliteSprite,
+    //   color: new THREE.Color("#416BFF"),
+    // });
+    // this.highlightedMaterial = new THREE.SpriteMaterial({
+    //   map: this._satelliteSprite,
+    //   color: new THREE.Color("#fca300"),
+    // });
+    // this.material = new THREE.SpriteMaterial({
+    //   map: this._satelliteSprite,
+    //   color: color,
+    // });
   };
 
   _getSatelliteSprite = (color: THREE.Color, size: number) => {
     const SpriteScaleFactor = 4;
 
     this._setupSpriteMaterials(color);
-
-    const result = new THREE.Sprite(
-      this.material as THREE.SpriteMaterial | undefined
+    const geometry = new THREE.PlaneGeometry(1, 1);
+    // const result = new THREE.Sprite(
+    //   this.material as THREE.MeshBasicMaterial | undefined
+    // );
+    const result = new THREE.Mesh(
+      geometry,
+      this.material as THREE.RawShaderMaterial | undefined
     );
+
     result.scale.set(size * SpriteScaleFactor, size * SpriteScaleFactor, 1);
     return result;
   };
@@ -317,7 +348,7 @@ export class Engine {
       this.updateSatellitePosition(station, date);
     });
 
-    this.render();
+    // this.render();
   };
 
   // __ Scene _______________________________________________________________
@@ -328,6 +359,9 @@ export class Engine {
       const height = window.innerHeight;
 
       this.scene = new THREE.Scene();
+
+      this.groupSat = new THREE.Group();
+      this.scene.add(this.groupSat);
 
       this._setupCamera(width, height);
 
@@ -393,12 +427,12 @@ export class Engine {
 
     // Planet
     let geometry = new THREE.SphereGeometry(earthRadius, 15, 15);
-    let material = new THREE.MeshPhongMaterial({
+    let material = new THREE.MeshBasicMaterial({
       wireframe: true,
       color: 0x7f7f7f,
       //emissive: 0x072534,
       //   side: THREE.DoubleSide,
-      flatShading: false,
+      // flatShading: false,
       // map: textLoader.load(earthmap, this.render),
     });
 
@@ -418,6 +452,11 @@ export class Engine {
 
     this.earth = group;
     this.scene?.add(this.earth);
+  };
+
+  rotateEarth = (rotation: number) => {
+    this.earth!.rotation.y = rotation;
+    this.groupSat!.rotation.y = rotation;
   };
 
   _findStationFromMesh = (threeObject: THREE.Object3D<THREE.Event>) => {

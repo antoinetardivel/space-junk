@@ -1,19 +1,20 @@
 import { Component } from "react";
 import * as THREE from "three";
 import { Engine } from "../3DElements/Engine";
-import Search from "../components/Search";
-import Info from "../components/Info";
-import Preview from "../components/Preview";
-import SelectedStations from "../components/SelectedStations";
-import FastFilter from "../components/FastFilter";
+import Search from "../components/Search.component";
+import Info from "../components/Info.component";
+import Preview from "../components/Preview.component";
+import SelectedStations from "../components/SelectedStations.component";
+import FastFilter from "../components/FastFilter.component";
 
 import { satellitesInventory } from "../data/satellite";
 import { IStation, totalObjects } from "../types/models";
 
 // Bypass CORS
-function getCorsFreeUrl(url: string) {
+const getCorsFreeUrl = (url: string) => {
+  // return url;
   return "https://api.allorigins.win/raw?url=" + url;
-}
+};
 
 interface IState {
   selected: IStation[];
@@ -142,6 +143,7 @@ class Earth extends Component {
   addStations = async () => {
     await this.engine
       ?.loadLteFileStations(
+        // getCorsFreeUrl("https://celestrak.com/pub/TLE/catalog.txt"),
         getCorsFreeUrl("http://www.celestrak.com/NORAD/elements/active.txt"),
         new THREE.Color("#ffffff")
       )
@@ -155,17 +157,21 @@ class Earth extends Component {
   };
 
   handleTimer = () => {
+    let interval30 = 1 / 15;
+    let interval60 = 1 / 25;
     let interval = 1 / 30;
     if (this.orbitTime) {
       if (this.clock) {
         this.elapsedTime += this.clock.getDelta();
-        console.log(this.clock.getElapsedTime());
 
-        if (this.elapsedTime > interval) {
-          console.log("rest");
+        if (this.elapsedTime > interval30) {
+          this.engine?.rotateEarth(this.clock.getElapsedTime() * 0.01);
           this.orbitTime.setSeconds(this.orbitTime.getSeconds() + 0);
           this.engine?.updateAllPositions(this.orbitTime);
           this.elapsedTime = this.elapsedTime % interval;
+        }
+        if (this.elapsedTime > interval60) {
+          this.engine?.render();
         }
       }
       requestAnimationFrame(this.handleTimer);
