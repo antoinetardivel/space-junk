@@ -27,7 +27,7 @@ const DataPage: React.FC<IDataPage> = ({
   useEffect(() => {
     if (isDisplayed) {
       gsap.to(contentRef.current, {
-        marginTop: "0vh",
+        marginTop: "0px",
         duration: 1,
         ease: "power2.out",
       });
@@ -50,7 +50,10 @@ const DataPage: React.FC<IDataPage> = ({
     <>
       <div className={styles.dataPageLayout} ref={containerRef}>
         <div className={styles.dataPageContainer} ref={contentRef}>
-          <div className={styles.banner}></div>
+          <div className={styles.banner}>
+            <div className={styles.demiBG}></div>
+            <img src="/transition.png" alt="" className={styles.bannerImage} />
+          </div>
           <>
             <DigDataButton setIsDataOpened={() => setIsDataOpened(false)} />
             <p className={styles.section1}>

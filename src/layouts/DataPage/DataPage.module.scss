@@ -200,7 +200,7 @@
 
 .banner {
   z-index: 2 !important;
-  background-color: green;
+  // background-color: green;
   width: 100%;
   height: 300px;
   min-height: 300px;
@@ -208,8 +208,21 @@
   margin-top: -300px;
   position: absolute;
 }
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
 .video2 {
   border: 0.5px solid white;
   margin-top: 300px;
   object-fit: cover;
+}
+.demiBG {
+  background-color: black;
+  margin-top: 150px;
+  height: 150px;
+  width: 100%;
+  position: absolute;
+  top: 0;
 }
