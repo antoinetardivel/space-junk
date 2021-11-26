@@ -1,0 +1,15 @@
+.orbit {
+  width: 100%;
+  z-index: 1;
+  margin-top: 20px;
+}
+.orbitSection {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-column-gap: 10px;
+}
+.optionTitle {
+  font-size: 0.625rem;
+  margin: 0;
+  margin-bottom: 8px;
+}

@@ -1,0 +1,24 @@
+.selected {
+  width: 100%;
+  border: 1px solid white;
+  font-size: 0.75rem;
+  font-family: "Menlo";
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 10px;
+}
+.cross {
+  border: none;
+  border-radius: none;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  width: 12px;
+  height: 12px;
+}
+.crossIcon {
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+}

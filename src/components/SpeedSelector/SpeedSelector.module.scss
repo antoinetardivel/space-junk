@@ -1,0 +1,14 @@
+.speed {
+  width: 100%;
+  z-index: 1;
+}
+.speedSection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 10px;
+}
+.optionTitle {
+  font-size: 0.625rem;
+  margin: 0;
+  margin-bottom: 8px;
+}

@@ -1,0 +1,134 @@
+.toggleContainer {
+  z-index: 1;
+  height: 132px;
+  //   background-color: red;
+  position: absolute;
+  right: 0;
+  margin-right: -34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-out;
+}
+
+.toggleBorder {
+  border: none;
+  z-index: 1;
+  height: 132px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+.toggleBorderEx {
+  clip-path: polygon(
+    0 0,
+    0 0,
+    10px 11px,
+    10px 50px,
+    100% 55px,
+    100% calc(100% - 55px),
+    10px calc(100% - 50px),
+    10px calc(100% - 11px),
+    0 100%,
+    0 100%
+  );
+}
+.toggleBorderNEx {
+  clip-path: polygon(
+    0 0,
+    27px 0,
+    37px 11px,
+    37px 50px,
+    32px 55px,
+    32px calc(100% - 55px),
+    37px calc(100% - 50px),
+    37px calc(100% - 11px),
+    27px 100%,
+    0 100%
+  );
+}
+.toggleInner {
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: "Menlo";
+  font-size: 0.75rem;
+  position: relative;
+  transition: all 0.3s ease-out;
+}
+.toggleInnerEx {
+  clip-path: polygon(
+    0 2px,
+    0 2px,
+    8px 11px,
+    8px 51px,
+    100% 56px,
+    100% calc(100% - 56px),
+    8px calc(100% - 51px),
+    8px calc(100% - 11px),
+    0 calc(100% - 2px),
+    0 calc(100% - 2px)
+  );
+}
+.toggleInnerNEx {
+  clip-path: polygon(
+    0 0px,
+    25px 0px,
+    35px 11px,
+    35px 48px,
+    30px 53px,
+    30px calc(100% - 53px),
+    35px calc(100% - 48px),
+    35px calc(100% - 11px),
+    25px calc(100%),
+    0 calc(100%)
+  );
+}
+.toggleBorder:hover .toggleInner {
+  background-color: #252525;
+}
+
+.arrowEx {
+  z-index: 1;
+  position: absolute;
+  right: 5px;
+  transition: all 0.3s ease-out;
+}
+.arrowNEx {
+  z-index: 1;
+  position: absolute;
+  right: -5px;
+  transform: rotate(180deg);
+  transition: all 0.3s ease-out;
+}
+
+.optionsTextNEx {
+  width: 8px;
+  font-family: "Menlo";
+  font-size: 0.75rem;
+  font-weight: bold;
+  white-space: normal;
+  word-break: break-all;
+  opacity: 0;
+  transition: all 0.3s ease-out;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently */
+}
+.optionsTextEX {
+  opacity: 1;
+}

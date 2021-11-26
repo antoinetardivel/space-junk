@@ -1,5 +1,6 @@
 import React from "react";
-import { IStation } from "../types/models";
+import { IStation } from "../../../types/models";
+import styles from "./SearchResults.module.scss";
 
 const MaxSearchResults = 10;
 
@@ -30,14 +31,17 @@ const SearchResults: React.FC<ISearchResults> = ({
   if (!results) return null;
 
   return (
-    <div className="ResultsWrapper">
-      {results.map((result: any, i: number) => (
-        <StationPreview
-          key={result.name + `${i}`}
-          station={result}
-          onClick={onResultClick}
-        />
-      ))}
+    <div className={styles.resultContainer}>
+      <div className={styles.resultsWrapper}>
+        {results.map((result: any, i: number) => (
+          <StationPreview
+            key={result.name + `${i}`}
+            station={result}
+            onClick={onResultClick}
+          />
+        ))}
+        {results.length <= 0 && <div className={styles.noResult}>No satellite found ;{"("}</div>}
+      </div>
     </div>
   );
 };
@@ -45,32 +49,22 @@ const SearchResults: React.FC<ISearchResults> = ({
 interface IStationPreview {
   station: IStation;
   onClick: (station: IStation) => void;
-  onRemoveClick?: (station: IStation) => void;
   className?: string;
 }
 export const StationPreview: React.FC<IStationPreview> = ({
   station,
   onClick,
-  onRemoveClick,
   className,
 }) => {
   const id = station.satrec && station.satrec.satnum;
 
   return (
     <div
-      className={"Result " + (className || "")}
+      className={[styles.result, className || ""].join(" ")}
       onClick={(e) => onClick && onClick(station)}
     >
       <p>
         <span title={id ? "NORAD ID: " + id : ""}>{station.name}</span>
-        {onRemoveClick && (
-          <span
-            className="RemoveButton"
-            onClick={(e) => onRemoveClick(station)}
-          >
-            x
-          </span>
-        )}
       </p>
     </div>
   );

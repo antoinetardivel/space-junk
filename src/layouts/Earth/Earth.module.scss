@@ -1,0 +1,78 @@
+.optionContainer {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  padding: 0 30px;
+}
+.planetSection {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+.optionColumn {
+  transition: all 0.3s ease-out;
+  position: relative;
+  background-color: rgb(10, 51, 10);
+  width: 252px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.planetScene {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.separator {
+  z-index: 1;
+  width: 100%;
+  margin: 15px 0;
+}
+
+.cornerButtonContainer {
+  border: none;
+  z-index: 1;
+  height: 40px;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%
+  );
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1px;
+  background-color: white;
+  cursor: pointer;
+}
+.cornerButtonInner {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%
+  );
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: "Menlo";
+  font-size: 0.75rem;
+}
+.cornerButtonContainer:hover .cornerButtonInner {
+  background-color: #252525;
+}

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-// import earthmap from "../assets/earthtexture.jpg";
-import circle from "../assets/circle.png";
+// import earthmap from "../assets/textures/earthtexture.jpg";
+import circle from "../assets/textures/circle.png";
 import {
   parseTleFile,
   getPositionFromTle,
@@ -9,10 +9,8 @@ import {
 } from "../utils/parseTle";
 import { earthRadius } from "satellite.js/lib/constants";
 import { IStation, IStationOptions } from "../types/models";
-import flagVertexShader from "../shaders/satellite/vertex.glsl";
-import flagFragmentsShader from "../sharders/satellite/fragments.glsl";
 
-const SatelliteSize = 50;
+// const SatelliteSize = 50;
 const ixpdotp = 1440 / (2.0 * 3.141592654);
 
 let TargetDate = new Date();
@@ -34,18 +32,19 @@ export class Engine {
   private options: any = {};
   private controls: OrbitControls | null = null;
   private renderer: THREE.WebGLRenderer | null = null;
-  private camera: THREE.PerspectiveCamera | null = null;
+  public camera: THREE.PerspectiveCamera | null = null;
   private earth: THREE.Mesh | THREE.Group | null = null;
   private geometry: THREE.BufferGeometry | null = null;
-  private material: THREE.MeshBasicMaterial | THREE.RawShaderMaterial | null =
+  private material: THREE.MeshPhongMaterial | THREE.SpriteMaterial | null =
     null;
   private scene: THREE.Scene | null = null;
   private _satelliteSprite: THREE.Texture | null = null;
-  private selectedMaterial: THREE.RawShaderMaterial | null = null;
-  private highlightedMaterial: THREE.RawShaderMaterial | null = null;
+  private selectedMaterial: THREE.SpriteMaterial | null = null;
+  private highlightedMaterial: THREE.SpriteMaterial | null = null;
   private orbitMaterial: THREE.LineBasicMaterial | null = null;
   private stations: IStation[] = [];
   private groupSat: THREE.Group | null = null;
+  public cameraDistance: number = 29000;
 
   initialize(container: HTMLDivElement, options = {}) {
     this.el = container;
@@ -137,8 +136,12 @@ export class Engine {
     this.removeOrbit(station);
   };
 
-  removeAllSatellites = (stations: IStation[]) => {
+  removeSatellites = (stations: IStation[]) => {
     stations.map((station) => this.removeSatellite(station));
+  };
+
+  removeAllSatellites = () => {
+    this.removeSatellites(this.stations);
   };
 
   loadLteFileStations = async (
@@ -167,9 +170,10 @@ export class Engine {
 
     if (!this.orbitMaterial) {
       this.orbitMaterial = new THREE.LineBasicMaterial({
-        color: 0x243984,
+        color: 0x001ef0,
         opacity: 1.0,
         transparent: true,
+        linewidth: 2,
       });
     }
 
@@ -200,7 +204,7 @@ export class Engine {
     station.orbit.geometry.dispose();
     station.orbit = null;
     if (this.material)
-      station.mesh.material = this.material as THREE.RawShaderMaterial;
+      station.mesh.material = this.material as THREE.SpriteMaterial;
     this.render();
   };
 
@@ -268,54 +272,27 @@ export class Engine {
     this._satelliteSprite.magFilter = THREE.NearestFilter;
     this._satelliteSprite.generateMipmaps = false;
 
-    this.selectedMaterial = new THREE.RawShaderMaterial({
-      vertexShader: ``,
-      fragmentShader: ``,
-      uniforms: {
-        uColor: { value: new THREE.Color("#416bff") },
-      },
+    this.selectedMaterial = new THREE.SpriteMaterial({
+      map: this._satelliteSprite,
+      color: new THREE.Color("#001EF0"),
     });
-    this.highlightedMaterial = new THREE.RawShaderMaterial({
-      vertexShader: ``,
-      fragmentShader: ``,
-      uniforms: {
-        uColor: { value: new THREE.Color("#fca300") },
-      },
+    this.highlightedMaterial = new THREE.SpriteMaterial({
+      map: this._satelliteSprite,
+      color: new THREE.Color("#fca300"),
     });
-    this.material = new THREE.RawShaderMaterial({
-      vertexShader: ``,
-      fragmentShader: ``,
-      uniforms: {
-        uColor: { value: new THREE.Color(color) },
-      },
+    this.material = new THREE.SpriteMaterial({
+      map: this._satelliteSprite,
+      color: color,
     });
-    // this.highlightedMaterial = new THREE.MeshBasicMaterial({ color: 0xfca300 });
-    // this.material = new THREE.MeshBasicMaterial({ color: color });
-    // this.selectedMaterial = new THREE.SpriteMaterial({
-    //   map: this._satelliteSprite,
-    //   color: new THREE.Color("#416BFF"),
-    // });
-    // this.highlightedMaterial = new THREE.SpriteMaterial({
-    //   map: this._satelliteSprite,
-    //   color: new THREE.Color("#fca300"),
-    // });
-    // this.material = new THREE.SpriteMaterial({
-    //   map: this._satelliteSprite,
-    //   color: color,
-    // });
   };
 
   _getSatelliteSprite = (color: THREE.Color, size: number) => {
     const SpriteScaleFactor = 4;
 
     this._setupSpriteMaterials(color);
-    const geometry = new THREE.PlaneGeometry(1, 1);
-    // const result = new THREE.Sprite(
-    //   this.material as THREE.MeshBasicMaterial | undefined
-    // );
-    const result = new THREE.Mesh(
-      geometry,
-      this.material as THREE.RawShaderMaterial | undefined
+
+    const result = new THREE.Sprite(
+      this.material as THREE.SpriteMaterial | undefined
     );
 
     result.scale.set(size * SpriteScaleFactor, size * SpriteScaleFactor, 1);
@@ -387,11 +364,23 @@ export class Engine {
         FAR = 1e27;
       this.camera = new THREE.PerspectiveCamera(54, width / height, NEAR, FAR);
       this.controls = new OrbitControls(this.camera, this.el);
+      this.controls.minDistance = 7371;
+      this.controls.maxDistance = 127371;
       this.controls.enablePan = false;
-      this.controls.addEventListener("change", () => this.render());
-      this.camera.position.z = -15000;
-      this.camera.position.x = 15000;
+      this.controls.addEventListener("change", () => {
+        this.render();
+        if (this.earth)
+          this.cameraDistance = this.camera?.position.distanceTo(
+            this.earth.position
+          ) as number;
+      });
+      this.camera.position.z = -20000;
+      this.camera.position.x = 20000;
       this.camera.lookAt(0, 0, 0);
+      if (this.earth)
+        this.cameraDistance = this.camera?.position.distanceTo(
+          this.earth.position
+        ) as number;
     } else {
       console.log("Container is not defined");
     }
@@ -426,8 +415,18 @@ export class Engine {
     const group = new THREE.Group();
 
     // Planet
-    let geometry = new THREE.SphereGeometry(earthRadius, 15, 15);
+    let geometry = new THREE.SphereGeometry(earthRadius, 10, 10);
     let material = new THREE.MeshBasicMaterial({
+      // wireframe: true,
+      color: 0x000000,
+      //emissive: 0x072534,
+      //   side: THREE.DoubleSide,
+      // flatShading: false,
+      // map: textLoader.load(earthmap, this.render),
+    });
+
+    let geometry2 = new THREE.SphereGeometry(earthRadius, 20, 20);
+    let material2 = new THREE.MeshBasicMaterial({
       wireframe: true,
       color: 0x7f7f7f,
       //emissive: 0x072534,
@@ -435,9 +434,10 @@ export class Engine {
       // flatShading: false,
       // map: textLoader.load(earthmap, this.render),
     });
-
+    const earth2 = new THREE.Mesh(geometry2, material2);
     const earth = new THREE.Mesh(geometry, material);
     group.add(earth);
+    group.add(earth2);
 
     // // Axis
     // material = new THREE.LineBasicMaterial({ color: 0xffffff });

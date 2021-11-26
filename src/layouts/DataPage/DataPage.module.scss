@@ -1,0 +1,211 @@
+.dataPageLayout {
+  max-height: 100vh;
+  background-color: red;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 3;
+}
+.dataPageContainer {
+  //   margin-top: 100vh;
+  background-color: black;
+  height: 200vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.section1 {
+  margin-top: 300px;
+  margin-bottom: 400px;
+  color: white;
+  font-family: "Menlo";
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 3rem;
+}
+.section2 {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  grid-column-gap: 30px;
+  max-width: 1400px;
+  & h2 {
+    font-size: 1.5rem;
+    font-family: "Menlo";
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+}
+.section2P {
+  font-size: 1rem;
+  font-family: "Menlo";
+  font-weight: normal;
+  margin-bottom: 15px;
+  color: #b0b0b0;
+}
+.satellite {
+  grid-column: 2/7;
+}
+.bold {
+  color: white;
+  font-weight: bold;
+}
+.divBorderCorner {
+  height: fit-content;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%
+  );
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1px;
+  background-color: white;
+}
+.divBorderCornerInner {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%
+  );
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  position: relative;
+}
+.divCornerCont1 {
+  position: relative;
+  grid-column: 7/13;
+}
+.hrDashed {
+  width: 100%;
+  border: 1px dashed #b0b0b0;
+  margin: 20px 0;
+}
+.asterisk {
+  margin: 0;
+  color: #b0b0b0;
+  font-size: 0.625rem;
+  font-family: "Menlo";
+  font-weight: normal;
+}
+
+.cornerStar {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  top: -50px;
+  left: -50px;
+}
+
+.section3 {
+  margin: 300px 0;
+  display: grid;
+  flex-direction: row;
+  grid-template-columns: repeat(14, 1fr);
+  grid-column-gap: 30px;
+  max-width: 1400px;
+}
+
+.infoCard {
+  grid-row: 1;
+  padding: 10px;
+  border: 1px solid white;
+  background-color: #252525;
+  height: fit-content;
+}
+.infoCard1p {
+  color: #b0b0b0;
+  font-family: "Menlo";
+  font-size: 0.625rem;
+  line-height: 0.75rem;
+  margin-bottom: 15px;
+}
+.infoCard2p {
+  color: #b0b0b0;
+  font-family: "Menlo";
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.asteriskIcon {
+  width: 18px;
+  height: 18px;
+  margin-left: -2px;
+  margin-bottom: -4px;
+}
+.section4 {
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 510px;
+}
+.divCornerCont2 {
+  position: relative;
+  max-width: 880px;
+}
+.video {
+  width: calc(100% - 60px);
+  position: absolute;
+  bottom: -210px;
+  border: 1px white solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 30px;
+  object-fit: fill;
+  height: 330px;
+}
+.mb120 {
+  margin-bottom: 120px;
+}
+.divCornerCont3 {
+  position: relative;
+  width: fit-content;
+}
+.section5,
+.section6 {
+  margin-bottom: 300px;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  & .divBorderCornerInner {
+    padding: 15px 20px;
+  }
+}
+.roundedGraphicCont {
+  width: 100vw;
+  max-width: 80vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-top: 60px;
+}
+.earthImg {
+  position: absolute;
+  max-width: 80vw;
+  width: 100%;
+}
+.roundedGraphic {
+  position: absolute;
+  max-width: 80vw;
+  width: 100%;
+}
+.section6 {
+  margin-top: 300px;
+}

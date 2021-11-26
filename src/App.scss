@@ -1,0 +1,29 @@
+body,
+h1,
+h2,
+p,
+div,
+span,
+li,
+ul {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: black;
+  color: white;
+  font-size: 12px;
+}
+
+h1 {
+  text-transform: uppercase;
+}
+.logo {
+  position: fixed;
+  z-index: 2;
+  margin-left: calc(50% - 124px);
+  width: 248px;
+  margin-top: 15px;
+}

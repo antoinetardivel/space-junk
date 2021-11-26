@@ -1,0 +1,82 @@
+.distance {
+  width: 100%;
+  z-index: 1;
+  margin-top: 20px;
+}
+
+.optionTitle {
+  font-size: 0.625rem;
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.displayDistance {
+  color: white;
+  margin-top: 10px;
+  font-size: 0.625rem;
+  margin: 0;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.distanceSliderContainer {
+  height: 25px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.selectDistance {
+  position: absolute;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  background: transparent;
+  outline: none;
+  opacity: 1;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+  border: none;
+  border-radius: 0;
+}
+
+.selectDistance:hover {
+  opacity: 1;
+  border: none;
+  border-radius: 0;
+}
+
+.selectDistance::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  background: white;
+  background-color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+}
+// .selectDistance::-webkit-slider-thumb:hover {
+//   background: blue;
+//   background-color: blue;
+// }
+
+.selectDistance::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: white;
+  background-color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+}
+.selectDistance::-moz-range-thumb:hover {
+  background: blue;
+  background-color: blue;
+}
+.dottedLines {
+  position: absolute;
+  width: 100%;
+}

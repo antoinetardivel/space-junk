@@ -1,5 +1,5 @@
 import React from "react";
-import { IStation } from "../types/models";
+import { IStation } from "../../../types/models";
 
 interface IPreview {
   isVisible: boolean;

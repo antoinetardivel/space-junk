@@ -1,0 +1,13 @@
+.selectorButton {
+  background-color: black;
+  border: 1px white solid;
+  width: 100%;
+  font-size: 0.75rem;
+  color: white;
+  padding: 10px;
+  font-family: "Menlo";
+  cursor: pointer;
+  &:hover {
+    background-color: #252525;
+  }
+}

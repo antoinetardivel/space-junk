@@ -1,0 +1,42 @@
+.digDataButtonContainer {
+  position: absolute;
+  height: 120px;
+  width: 120px;
+  z-index: 1;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: calc(50% - 60.5px);
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.animCont {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  height: 100px;
+}
+.globeCont {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  height: 100px;
+  transform: scale(1.3);
+}
+.globe {
+  position: absolute;
+  height: 80%;
+  transform: scale(1    );
+}
+.textButton {
+  position: absolute;
+  width: 40px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-family: "Menlo";
+}

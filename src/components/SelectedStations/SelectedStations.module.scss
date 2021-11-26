@@ -1,0 +1,41 @@
+.selected {
+  margin-top: 10px;
+  z-index: 1;
+  width: 100%;
+  display: grid;
+  grid-row-gap: 10px;
+}
+
+.optionTitle {
+  font-size: 0.625rem;
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.removeAll {
+  border: none;
+  border-radius: 0;
+  background-color: white;
+  padding: 2px 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.625rem;
+  font-family: "Menlo";
+  cursor: pointer;
+}
+
+.flexRemoveButton {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.625rem;
+  font-family: "Menlo";
+  align-items: center;
+  margin-top: 10px;
+}
+
+.separator {
+  z-index: 1;
+  width: 100%;
+  margin: 15px 0;
+}
