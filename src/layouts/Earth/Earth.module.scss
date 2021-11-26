@@ -76,3 +76,9 @@
 .cornerButtonContainer:hover .cornerButtonInner {
   background-color: #252525;
 }
+.digdatacontainer {
+  position: fixed;
+  z-index: 1;
+  margin-left: calc(50% - 60.5px);
+  bottom: 0;
+}

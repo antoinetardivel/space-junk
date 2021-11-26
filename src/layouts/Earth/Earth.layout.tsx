@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { Engine } from "../../3DElements/Engine";
 import Search from "../../components/Search/Search.component";
 import SateliteDatas from "../../components/SateliteDatas/SateliteDatas.component";
-import SelectedStations from "../../components/SelectedStations/SelectedStations.component";
+// import SelectedStations from "../../components/SelectedStations/SelectedStations.component";
 import OrbitSelector from "../../components/OrbitSelector/OrbitSelector.component";
 import styles from "./Earth.module.scss";
 import { satellitesInventory } from "../../data/satellite";
@@ -344,7 +344,7 @@ class Earth extends Component<IEarth, IState> {
     const {
       showPreview,
       onlySelected,
-      stationInfo,
+      // stationInfo,
       stationInventory,
       cameraDistance,
       speed,
@@ -356,7 +356,9 @@ class Earth extends Component<IEarth, IState> {
 
     return (
       <div className={styles.planetSection}>
-        <DigDataButton setIsDataOpened={this.props.setIsDataOpened} />
+        <div className={styles.digdatacontainer}>
+          <DigDataButton setIsDataOpened={this.props.setIsDataOpened} />
+        </div>
         <div className={styles.optionContainer}>
           <div
             className={styles.optionColumn}

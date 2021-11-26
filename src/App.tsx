@@ -10,7 +10,11 @@ const App = () => {
     <div className="App">
       <img src={logo} alt="" className={"logo"} />
       <Earth setIsDataOpened={setIsDataOpened} />
-      {isDataOponed && <DataPage />}
+      <DataPage
+        setIsDataOpened={setIsDataOpened}
+        margin={0}
+        isDisplayed={isDataOponed}
+      />
     </div>
   );
 };

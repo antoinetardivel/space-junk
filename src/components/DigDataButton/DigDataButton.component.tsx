@@ -27,12 +27,10 @@ const DigDataButton: React.FC<IDigDataButton> = ({ setIsDataOpened }) => {
       onMouseEnter={() => {
         animation.setDirection(1);
         animation.play();
-        console.log("enter");
       }}
       onMouseLeave={() => {
         animation.setDirection(-1);
         animation.play();
-        console.log("leave");
       }}
       onClick={() => setIsDataOpened(true)}
     >

@@ -1,6 +1,6 @@
 .dataPageLayout {
   max-height: 100vh;
-  background-color: red;
+  // background-color: rgba($color: #b62020, $alpha: 0.5);
   width: 100%;
   position: fixed;
   top: 0;
@@ -8,7 +8,8 @@
   z-index: 3;
 }
 .dataPageContainer {
-  //   margin-top: 100vh;
+  // padding-top: 100vh;
+  margin-top: calc(100vh + 300px);
   background-color: black;
   height: 200vh;
   max-height: 100vh;
@@ -91,7 +92,7 @@
 }
 .hrDashed {
   width: 100%;
-  border: 1px dashed #b0b0b0;
+  border: 0.5px dashed #b0b0b0;
   margin: 20px 0;
 }
 .asterisk {
@@ -187,7 +188,7 @@
     padding: 15px 20px;
   }
 }
-.roundedGraphicCont {
+.roundedGraphic {
   width: 100vw;
   max-width: 80vw;
   display: flex;
@@ -196,16 +197,14 @@
   position: relative;
   margin-top: 60px;
 }
-.earthImg {
-  position: absolute;
-  max-width: 80vw;
+
+.banner {
+  z-index: 2 !important;
+  background-color: green;
   width: 100%;
-}
-.roundedGraphic {
+  height: 300px;
+  min-height: 300px;
+  // transform: translateY(-300px);
+  margin-top: -300px;
   position: absolute;
-  max-width: 80vw;
-  width: 100%;
-}
-.section6 {
-  margin-top: 300px;
 }

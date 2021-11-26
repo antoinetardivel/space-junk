@@ -1,5 +1,4 @@
 .digDataButtonContainer {
-  position: absolute;
   height: 120px;
   width: 120px;
   z-index: 1;
@@ -7,8 +6,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: calc(50% - 60.5px);
-  margin-bottom: 10px;
   cursor: pointer;
 }
 .animCont {

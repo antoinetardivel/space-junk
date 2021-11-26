@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import styles from "./CameraDistanceSlider.module.scss";
-import roudedDottedLines from "../../assets/designElements/roudedDottedLines.svg";
 
 interface ICameraDistanceSlider {
   distance: number;
