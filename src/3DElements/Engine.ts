@@ -59,6 +59,7 @@ export class Engine {
 
     window.addEventListener("resize", this.handleWindowResize);
     window.addEventListener("pointerdown", this.handleMouseDown);
+    this.options.setIsReady(true);
   }
 
   dispose() {

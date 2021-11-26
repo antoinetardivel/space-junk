@@ -16,10 +16,10 @@ import ToggleOptions from "../../components/ToggleOptions/ToggleOptions.componen
 import DigDataButton from "../../components/DigDataButton/DigDataButton.component";
 
 // Bypass CORS
-const getCorsFreeUrl = (url: string) => {
-  // return url;
-  return "https://api.allorigins.win/raw?url=" + url;
-};
+// const getCorsFreeUrl = (url: string) => {
+//   // return url;
+//   return "https://api.allorigins.win/raw?url=" + url;
+// };
 
 interface IState {
   selected: IStation[];
@@ -37,6 +37,7 @@ interface IState {
 
 interface IEarth {
   setIsDataOpened: (state: boolean) => void;
+  setIsReady: (state: boolean) => void;
 }
 
 class Earth extends Component<IEarth, IState> {
@@ -72,6 +73,7 @@ class Earth extends Component<IEarth, IState> {
       this.engine = new Engine();
       this.engine.initialize(this.el, {
         onStationClicked: this.handleStationClicked,
+        setIsReady: this.props.setIsReady,
       });
       this.addStations();
       if (!this.clock) {
@@ -181,8 +183,9 @@ class Earth extends Component<IEarth, IState> {
   addStations = async () => {
     await this.engine
       ?.loadLteFileStations(
+        "/active.txt",
         // getCorsFreeUrl("https://celestrak.com/pub/TLE/catalog.txt"),
-        getCorsFreeUrl("http://www.celestrak.com/NORAD/elements/active.txt"),
+        // getCorsFreeUrl("http://www.celestrak.com/NORAD/elements/active.txt"),
         new THREE.Color("#ffffff")
       )
       .then((stations: IStation[] | undefined) => {

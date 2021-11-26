@@ -4,8 +4,11 @@ import cornerStar from "../../assets/designElements/cornerStar.svg";
 import asteriskIcon from "../../assets/designElements/asteriskIcon.svg";
 import roundedGraphic from "../../assets/designElements/roundedGraphic.svg";
 import countryGraphic from "../../assets/designElements/countryGraphic.svg";
+import numberRocket from "../../assets/designElements/numberRocket.svg";
+import needles from "../../assets/designElements/needles.svg";
+import end from "../../assets/designElements/end.svg";
 import DigDataButton from "../../components/DigDataButton/DigDataButton.component";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 interface IDataPage {
@@ -21,18 +24,26 @@ const DataPage: React.FC<IDataPage> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const [forceScroll, setForceScroll] = useState<number>(0);
   useEffect(() => {
     if (isDisplayed) {
-      gsap.to(contentRef.current, { marginTop: "0vh", duration: 1 });
-      gsap.to(containerRef.current, { zIndex: 2 });
+      gsap.to(contentRef.current, {
+        marginTop: "0vh",
+        duration: 1,
+        ease: "power2.out",
+      });
+      gsap.to(containerRef.current, { zIndex: 2, ease: "power2.out" });
       // contentRef.current?.addEventListener("scroll", (e) => console.log(e));
     } else {
       gsap.to(contentRef.current, {
         marginTop: "calc(100vh + 300px)",
         duration: 1,
+        ease: "power2.out",
       });
-      gsap.to(containerRef.current, { zIndex: -1, delay: 2 });
+      gsap.to(containerRef.current, {
+        zIndex: -1,
+        delay: 2,
+        ease: "power2.out",
+      });
     }
   }, [isDisplayed]);
   return (
@@ -272,6 +283,36 @@ const DataPage: React.FC<IDataPage> = ({
                 alt=""
                 className={styles.roundedGraphic}
               />
+            </div>
+            <div className={styles.section6}>
+              <div className={styles.divCornerCont3}>
+                <img src={cornerStar} alt="" className={styles.cornerStar} />
+                <div className={styles.divBorderCorner}>
+                  <div className={styles.divBorderCornerInner}>
+                    <h2>Density of traffic around Earth</h2>
+                  </div>
+                </div>
+              </div>
+              <img
+                src={numberRocket}
+                alt=""
+                className={styles.roundedGraphic}
+              />
+              <img src={needles} alt="" className={styles.roundedGraphic} />
+              <video
+                width="484"
+                height="214"
+                controls={false}
+                autoPlay={true}
+                loop={true}
+                muted={true}
+                playsInline={true}
+                className={styles.video2}
+              >
+                <source src="/debris.webm" type="video/webm" />
+                Your browser does not support the video tag.
+              </video>
+              <img src={end} alt="" className={styles.roundedGraphic} />
             </div>
           </>
         </div>
