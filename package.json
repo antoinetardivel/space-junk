@@ -1,12 +1,25 @@
 {
-  "name": "spacejunk",
+  "name": "space-junk",
   "version": "2.0.0",
+  "description": "",
+  "homepage": "/",
+  "main": "main.ts",
+  "author": {
+    "name": "Antoine Tardivel",
+    "url": "https://www.anoinetardivel.com"
+  },
+  "repository": {
+    "url": "https://github.com/antoinetardivel/space-junk"
+  },
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
     "serve": "vite preview"
   },
   "devDependencies": {
+    "@types/dat.gui": "^0.7.7",
+    "@types/stats.js": "^0.17.0",
+    "@types/three": "^0.135.0",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
     "eslint": "^8.1.0",
@@ -16,5 +29,9 @@
     "typescript": "^4.4.4",
     "vite": "^2.6.13"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dat.gui": "^0.7.7",
+    "stats.js": "^0.17.0",
+    "three": "^0.134.0"
+  }
 }

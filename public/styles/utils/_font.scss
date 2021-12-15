@@ -1,17 +1,23 @@
 @font-face {
-  font-family: 'Roxborough';
+  font-family: 'Menlo';
   font-style: normal;
   font-weight: 400;
-  src: url('/fonts/RoxboroughCF-Regular.eot');
-  src: local(''), url('/fonts/RoxboroughCF-Regular.woff2') format('woff2'),
-    url('/fonts/RoxboroughCF-Regular.woff') format('woff');
+  src: url('/fonts/Menlo-Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Roxborough';
-  font-style: normal;
-  font-weight: 300;
-  src: url('/fonts/RoxboroughCF-Light.eot');
-  src: local(''), url('/fonts/RoxboroughCF-Light.woff2') format('woff2'),
-    url('/fonts/RoxboroughCF-Light.woff') format('woff');
+  font-family: 'Menlo';
+  font-style: bold;
+  font-weight: 700;
+  src: url('/fonts/Menlo-Bold.ttf') format('truetype');
+}
+html {
+  font-size: 16px;
+  font-family: 'Menlo';
+}
+@media screen and (max-width: 500px) {
+  body,
+  html {
+    font-size: 14px;
+  }
 }
