@@ -19,6 +19,7 @@ export default class Renderer {
   setInstance() {
     this.instance = new WebGLRenderer({
       canvas: this.canvas,
+      logarithmicDepthBuffer: true,
       antialias: true,
     });
     this.instance.setSize(this.sizes.width, this.sizes.height);

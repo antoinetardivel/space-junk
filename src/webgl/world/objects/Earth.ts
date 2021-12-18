@@ -1,6 +1,6 @@
 import { GUI } from "dat.gui";
 import { earthRadius } from "satellite.js/lib/constants";
-import { Group, Mesh, MeshBasicMaterial, Scene, SphereGeometry } from "three";
+import { Color, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Scene, SphereGeometry } from "three";
 import Experience from "../../Experience";
 import Debug from "../../../utils/debug/Debug";
 // import Loaders from '../../utils/Loaders';
@@ -13,11 +13,13 @@ export default class Earth {
   private debugFolder: GUI | null = null;
 
   private innerGlobeGeometry: SphereGeometry | null = null;
-  private globeGeometry: SphereGeometry | null = null;
   private innerGlobeMaterial: MeshBasicMaterial | null = null;
-  private globeMaterial: MeshBasicMaterial | null = null;
   private innerGlobeMesh: Mesh | null = null;
+
+  private globeGeometry: SphereGeometry | null = null;
+  private globeMaterial: MeshBasicMaterial | null = null;
   private globeMesh: Mesh | null = null;
+
   private earthGroup: Group | null = null;
 
   constructor() {
@@ -60,10 +62,10 @@ export default class Earth {
 
   setGroup() {
     this.earthGroup = new Group();
-    this.innerGlobeMesh && this.earthGroup.add(this.innerGlobeMesh);
+    // this.innerGlobeMesh && this.earthGroup.add(this.innerGlobeMesh);
     this.globeMesh && this.earthGroup.add(this.globeMesh);
-
-    this.scene.add(this.earthGroup);
+    if (this.globeMesh) this.scene.add(this.globeMesh);
+    if (this.innerGlobeMesh) this.scene.add(this.innerGlobeMesh);
 
     // Debug
     if (this.debug.active) {
