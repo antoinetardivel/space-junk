@@ -1,0 +1,3 @@
+constonmessage = () =>{
+    const res = 'couc'
+}

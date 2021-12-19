@@ -12,7 +12,7 @@ export default class Time extends EventEmitter {
 
   public twentyThen: number = 0;
   public twentyElapsed: number = 0;
-  private twentyFPS: number = 1000 / 15;
+  private twentyFPS: number = 1000 / 5;
 
   constructor() {
     super();
