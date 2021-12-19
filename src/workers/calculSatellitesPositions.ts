@@ -1,3 +1,4 @@
-constonmessage = () =>{
-    const res = 'couc'
-}
+// constonmessage = () =>{
+//     const res = 'couc'
+// }
+export {}

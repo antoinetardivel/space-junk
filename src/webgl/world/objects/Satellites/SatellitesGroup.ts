@@ -3,6 +3,7 @@ import { ISatelliteData } from "../../../../models/satellites";
 import { getSatellites } from "../../../../services/satellites.service";
 import Experience from "../../../Experience";
 import Satellite from "./Satellite";
+// import MyWorker from "./worker?worker";
 
 export default class SatellitesGroup {
   private experience: Experience = new Experience();
@@ -16,6 +17,7 @@ export default class SatellitesGroup {
     this.getAllSatellites().then(async () => {
       this.addSatellitesToGroup();
       this.addGroupToScene();
+      // const worker = new MyWorker();
     });
 
     this.experience.time?.on("tickSatellite", () => this.update());
@@ -38,6 +40,13 @@ export default class SatellitesGroup {
   }
 
   addSatellitesToGroup() {
+    if (window.Worker) {
+      console.log("worker");
+      var elemDiv = document.createElement("div");
+      elemDiv.style.cssText =
+        "position: fixed;width: 100%;height: 100%;opacity: 0.3;z-index: 1000;background: red;top: 0;";
+      document.body.appendChild(elemDiv);
+    }
     for (const satellite of this.satelittesTLEList) {
       const satInstance = new Satellite(satellite);
       satInstance.setPosition(this.experience.targetDate);
