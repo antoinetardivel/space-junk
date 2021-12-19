@@ -1,4 +1,4 @@
-import { AmbientLight, DirectionalLight, PointLight, Scene } from 'three';
+import { AmbientLight, PointLight, Scene } from 'three';
 import Experience from '../Experience';
 
 export default class Lights {

@@ -1,6 +1,6 @@
 import { GUI } from "dat.gui";
 import { earthRadius } from "satellite.js/lib/constants";
-import { Color, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Scene, SphereGeometry } from "three";
+import { Group, Mesh, MeshBasicMaterial, Scene, SphereGeometry } from "three";
 import Experience from "../../Experience";
 import Debug from "../../../utils/debug/Debug";
 // import Loaders from '../../utils/Loaders';
@@ -82,6 +82,10 @@ export default class Earth {
         .max(5)
         .step(1);
     }
+  }
+
+  update(){
+    
   }
 
   destroy() {

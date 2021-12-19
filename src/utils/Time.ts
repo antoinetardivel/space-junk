@@ -1,12 +1,18 @@
-import EventEmitter from './EventEmitter';
+import EventEmitter from "./EventEmitter";
 
 let reqAF: number;
 
 export default class Time extends EventEmitter {
-  private start: number = Date.now();
-  private current: number = this.start;
-  public elapsed: number = 0;
-  public delta: number = 16;
+  public start: number = Date.now();
+  public now: number = 0;
+
+  public fiftyThen: number = 0;
+  public fiftyElapsed: number = 0;
+  private fiftyFPS: number = 1000 / 50;
+
+  public twentyThen: number = 0;
+  public twentyElapsed: number = 0;
+  private twentyFPS: number = 1000 / 15;
 
   constructor() {
     super();
@@ -15,12 +21,21 @@ export default class Time extends EventEmitter {
   }
 
   tick() {
-    const currentTime = Date.now();
-    this.delta = currentTime - this.current;
-    this.current = currentTime;
-    this.elapsed = this.current - this.start;
+    this.now = Date.now();
+    this.fiftyElapsed = this.now - this.fiftyThen;
+    this.twentyElapsed = this.now - this.twentyThen;
 
-    this.trigger('tick');
+    //30 fps
+    if (this.fiftyElapsed > this.fiftyFPS) {
+      this.trigger("tick");
+      this.fiftyThen = this.now - (this.fiftyElapsed % this.fiftyFPS);
+    }
+
+    // 20 fps
+    if (this.twentyElapsed > this.twentyFPS) {
+      this.trigger("tickSatellite");
+      this.twentyThen = this.now - (this.twentyElapsed % this.twentyFPS);
+    }
 
     reqAF = requestAnimationFrame(() => this.tick());
   }
