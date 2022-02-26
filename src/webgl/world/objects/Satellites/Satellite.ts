@@ -5,8 +5,7 @@ import {
   SpriteMaterial,
   TextureLoader,
 } from "three";
-import { ISatelliteData } from "../../../../models/satellites";
-import getSatelliteThreePos from "../../../../utils/TLE/positionsTLE";
+// import { ISatelliteData } from "../../../../models/satellites";
 
 interface ISatellitePosition {
   x: number;
@@ -23,14 +22,14 @@ export default class Satellite {
     y: 0,
     z: 0,
   };
-  private TLEData: ISatelliteData | null;
+  // private TLEData: ISatelliteData | null;
   private satelliteSize: number = 50;
   private spriteScaleFactor: number = 4;
 
   public instance: Sprite | null = null;
 
-  constructor(TLEData: ISatelliteData) {
-    this.TLEData = TLEData;
+  constructor() {
+    // this.TLEData = TLEData;
     this.setMaterials();
     this.setInstance();
   }
@@ -44,11 +43,17 @@ export default class Satellite {
     );
   }
 
-  setPosition(targetDate: Date) {
-    const satpos = getSatelliteThreePos(
-      this.TLEData as ISatelliteData,
-      targetDate
-    );
+  setPosition(
+    satpos: {
+      x: number;
+      y: number;
+      z: number;
+    } | null
+  ) {
+    // const satpos = getSatelliteThreePos(
+    //   this.TLEData as ISatelliteData,
+    //   targetDate
+    // );
     if (!satpos) return;
     this.position = satpos;
     this.instance?.position.set(
