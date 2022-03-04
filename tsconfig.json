@@ -1,25 +1,33 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
     "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext",
-      "webworker"
+      "ESNext",
+      "DOM"
     ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node",
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "alwaysStrict": true,
+    "sourceMap": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "esModuleInterop": false,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "isolatedModules": true,
+    "allowJs": false,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "vite/client"
+    ]
   },
   "include": [
     "./src",
