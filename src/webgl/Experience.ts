@@ -7,8 +7,8 @@ import Sizes from "../utils/Sizes";
 import Time from "../utils/Time";
 import Camera from "./Camera";
 import Renderer from "./Renderer";
-import Sources from "./world/sources";
-import World from "./world/World";
+import Sources from "./scene/sources";
+import World from "./scene/World";
 
 declare global {
   interface Window {

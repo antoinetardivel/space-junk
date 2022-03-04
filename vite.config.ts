@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
+import wasmPack from "vite-plugin-wasm-pack";
 
 export default defineConfig({
   server: {
@@ -6,4 +7,5 @@ export default defineConfig({
     https: false,
     open: true,
   },
+  plugins: [wasmPack(["./crate"])],
 });
