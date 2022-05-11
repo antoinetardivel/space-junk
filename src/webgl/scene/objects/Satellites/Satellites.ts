@@ -1,5 +1,5 @@
 //@ts-ignore
-import init, { crate } from "crate";
+import init, { test } from "crate";
 import {
   BufferAttribute,
   BufferGeometry,
@@ -66,8 +66,9 @@ export default class Satellites {
         new Date(this.experience.time?.start + this.experience.time.elapsed),
       ];
       init().then(() => {
-        console.log(crate(message2 as any));
-        crate(message2 as any);
+        // console.log(test(message2 as any));
+        // crate(message2 as any);
+        test()
       });
       const worker = new MyWorker();
 
