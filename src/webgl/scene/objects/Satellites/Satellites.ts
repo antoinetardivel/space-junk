@@ -1,5 +1,6 @@
 //@ts-ignore
 import init, { test } from "crate";
+// import Go from "wasm_exec-ts";
 import {
   BufferAttribute,
   BufferGeometry,
@@ -53,29 +54,52 @@ export default class Satellites {
   initPos() {
     if (window.Worker && this.experience.time) {
       console.log(this.satelittesTLEList[0]);
-      const message2 = {
-        tles: this.satelittesTLEList,
-        date: Math.floor(
-          (this.experience.time?.start +
-            this.experience.time.elapsed / 1000 / 60) <<
-            0
-        ),
+      const date = Math.round(
+        new Date(
+          this.experience.time.start + this.experience.time.elapsed * 500
+        ).getTime() / 1000
+      );
+      console.log(this.satelittesTLEList.length);
+      const goMessage = {
+        snumber: this.satelittesTLEList.length.toString(),
+        date: date.toString(),
+        tles: [this.satelittesTLEList[0]],
       };
+      // const goMessage = [date, [this.satelittesTLEList[0]]];
+
+      console.log(goMessage);
+      const getRes = async () => {
+        //@ts-ignore
+        if (getDate != undefined) {
+          //@ts-ignore
+          const res = await getDate(goMessage);
+          console.log("result =", res);
+        }
+      };
+      getRes();
+      // const message2 = {
+      //   tles: this.satelittesTLEList,
+      //   date: Math.floor(
+      //     (this.experience.time?.start +
+      //       this.experience.time.elapsed / 1000 / 60) <<
+      //       0
+      //   ),
+      // };
       const message = [
         this.satelittesTLEList,
         new Date(this.experience.time?.start + this.experience.time.elapsed),
       ];
-      init().then(() => {
-        // console.log(test(message2 as any));
-        // crate(message2 as any);
-        test()
-      });
+
+      // init().then(() => {
+      //   // console.log(test(message2 as any));
+      //   // crate(message2 as any);
+      //   test();
+      // });
       const worker = new MyWorker();
 
       this.isWaitingPos = true;
       worker.postMessage(message);
       worker.onmessage = (e: any) => {
-        console.log(e.data.count);
         if (this.geometry && this.material) {
           this.geometry.setAttribute(
             "position",
@@ -91,6 +115,15 @@ export default class Satellites {
   }
 
   updatePos() {
+    // const getSum = async () => {
+    //   //@ts-ignore
+    //   if (add != undefined) {
+    //     //@ts-ignore
+    //     const sum = await add(5, 5);
+    //     console.log("sum =", sum);
+    //   }
+    // };
+    // getSum();
     if (!this.isWaitingPos && window.Worker && this.experience.time) {
       const worker = new MyWorker();
       const message = [
