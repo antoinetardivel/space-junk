@@ -73,7 +73,7 @@ export default class Satellites {
         if (getDate != undefined) {
           //@ts-ignore
           const res = await getDate(goMessage);
-          console.log("result =", res);
+          console.log(res);
         }
       };
       getRes();
