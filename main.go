@@ -56,10 +56,9 @@ func getDate(this js.Value, d []jsValue) interface{} {
 	// }
 
 	satInstance, err := sat.TLEToSat(stle1.String(), stle2.String(), "wgs72")
-	satInstance = sat.Satellite(satInstance)
 	if err == nil {
 		
-		position, velocity := sat.PropagateJDay(satInstance, float64(dateFormatedToNumber))
+		position, velocity := sat.PropagateJDay(*satInstance, float64(dateFormatedToNumber))
 		fmt.Println(position)
 		fmt.Println(velocity)
 	}
