@@ -1,14 +1,9 @@
-import { ISatelliteData } from "../../models/satellites";
-import {
-  eciToEcf,
-  gstime,
-  EciVec3,
-} from "satellite.js";
+import { eciToEcf, EciVec3, gstime } from "satellite.js";
+import { IStartSateData } from "../../models/satellites";
 import getPositionAVelicity from "./getPositionAVelicity";
 
-const getSatelliteThreePos = (satellite: ISatelliteData, date?: Date) => {
+const getSatelliteThreePos = (satellite: IStartSateData, date?: Date) => {
   if (!satellite || !date) return null;
-
   const positionVelocity = getPositionAVelicity(satellite, date);
 
   const positionEci = positionVelocity?.position;
