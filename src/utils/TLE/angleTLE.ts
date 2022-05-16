@@ -1,12 +1,13 @@
 import { eciToGeodetic, GeodeticLocation, gstime } from "satellite.js";
-import { IStartSateDataWSatRec } from "../../models/satellites";
+import { ISatelliteData } from "../../models/satellites";
 import getPositionAVelicity from "./getPositionAVelicity";
 
 export const getAngleFromTle = (
-  satellite: IStartSateDataWSatRec,
+  satellite: ISatelliteData,
   date: Date
 ): GeodeticLocation | null => {
   if (!satellite || !date) return null;
+
   const positionVelocity = getPositionAVelicity(satellite, date);
 
   const positionEci = positionVelocity?.position;
