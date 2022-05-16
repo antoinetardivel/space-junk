@@ -1,6 +1,5 @@
 import styles from "./Home.module.scss";
 import logo from "../../assets/designElements/logo.svg";
-import globe from "../../assets/designElements/globet.gif";
 import { useRef } from "react";
 import gsap from "gsap";
 
@@ -25,10 +24,6 @@ const Home: React.FC<IHome> = ({ isReady }) => {
     <div className={styles.HomeContainer} ref={homeRef}>
       <img src={logo} alt="" className={styles.HomeLogo} />
       <div className={styles.HomeCentered}>
-        <img src={globe} alt="" className={styles.HomeChargement} />
-        <h2 className={styles.homeSentence}>
-          ⎯ An experience about the what’s above us ⎯
-        </h2>
         {isReady && (
           <button
             className={styles.cornerButtonContainer}

@@ -58,7 +58,7 @@ class Earth extends Component<IEarth, IState> {
       showPreview: false,
       stationInfo: null,
       stationInventory: null,
-      speed: 1,
+      speed: 0.5,
       orbit: "ALL",
       cameraDistance: 0,
       onlySelected: false,
