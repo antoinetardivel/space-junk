@@ -1,9 +1,9 @@
 import satellitesConfig from "../config/satellites.config";
-import { ISatelliteData } from "../models/satellites";
+import { IStartSateData } from "../models/satellites";
 import { parseTleFile } from "../utils/TLE/parseTLEFile";
 import getCorsFreeUrl from "./CorsFreeUrl.service";
 
-export const getSatellites = async (): Promise<ISatelliteData[] | null> => {
+export const getSatellites = async (): Promise<IStartSateData[] | null> => {
   try {
     return await fetch(getCorsFreeUrl(satellitesConfig.satelliteDataUrl)).then(
       (res) => {

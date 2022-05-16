@@ -1,9 +1,9 @@
-import { ISatelliteData } from "../../models/satellites";
+import { IStartSateData } from "../../models/satellites";
 
-export const parseTleFile = (TLEFile: string): ISatelliteData[] => {
+export const parseTleFile = (TLEFile: string): IStartSateData[] => {
   const result = [];
   const lines = TLEFile.split("\n");
-  let current: ISatelliteData = {};
+  let current: IStartSateData = {};
 
   for (let i = 0; i < lines.length; ++i) {
     const line = lines[i].trim();

@@ -1,19 +1,12 @@
 import {
   BufferAttribute,
   BufferGeometry,
-  Color,
-  DoubleSide,
   Points,
   PointsMaterial,
   Scene,
-  MeshPhongMaterial,
-  Mesh,
   ShaderMaterial,
   InstancedBufferGeometry,
-  Vector3,
   Float32BufferAttribute,
-  InstancedBufferAttribute,
-  AdditiveBlending,
 } from "three";
 import { GUI } from "dat.gui";
 import { IStartSateData } from "../../../../models/satellites";
@@ -34,7 +27,7 @@ export default class Satellites {
   private debug: Debug = this.experience.debug as Debug;
   private scene: Scene = this.experience.scene as Scene;
 
-  private satelittesTLEList: IStartSateData[] = [];
+  // private satelittesTLEList: IStartSateData[] = [];
   private isWaitingPos: Boolean = false;
   private material: PointsMaterial | null = null;
   private LEOGeometry: BufferGeometry | null = null;
@@ -50,16 +43,16 @@ export default class Satellites {
   private LEOvertices: Float32Array | null = null;
   private MEOvertices: Float32Array | null = null;
   private HEOvertices: Float32Array | null = null;
-  private PARAMS: any = {
-    ISSPosition: new Vector3(),
-    radiusFromEarth: 1,
-    instancesCount: 1,
-    spreadRatio: 0.05,
-    scaleMin: 10,
-    scaleMax: 10,
-    speed: 0.4,
-    blending: true,
-  };
+  // private PARAMS: any = {
+  //   ISSPosition: new Vector3(),
+  //   radiusFromEarth: 1,
+  //   instancesCount: 1,
+  //   spreadRatio: 0.05,
+  //   scaleMin: 10,
+  //   scaleMax: 10,
+  //   speed: 0.4,
+  //   blending: true,
+  // };
 
   constructor() {
     if (this.debug.active) {
@@ -90,7 +83,7 @@ export default class Satellites {
     try {
       await getSatellites().then((TLELines) => {
         if (TLELines != null) {
-          this.satelittesTLEList = TLELines;
+          // this.satelittesTLEList = TLELines;
           this.displayedSat = TLELines;
         }
       });
