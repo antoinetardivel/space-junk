@@ -1,11 +1,20 @@
 import { GeodeticLocation, SatRec } from "satellite.js";
-import { Sprite } from "three";
-
-export interface ISatelliteData {
+export interface IStartSateData {
+  name?: string;
+  tle1?: string;
+  tle2?: string;
+}
+export interface IStartSateDataWSatRec {
   name?: string;
   tle1?: string;
   tle2?: string;
   satrec?: SatRec;
-  mesh?: Sprite;
-  geoCoords?: GeodeticLocation;
+}
+export interface IPopulatedStaData {
+  name?: string;
+  tle1?: string;
+  tle2?: string;
+  satrec?: SatRec;
+  geoCoords: GeodeticLocation | null;
+  position?: { x: number; y: number; z: number };
 }

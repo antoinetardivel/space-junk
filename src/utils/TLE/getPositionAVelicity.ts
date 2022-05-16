@@ -1,8 +1,8 @@
 import { PositionAndVelocity, propagate, twoline2satrec } from "satellite.js";
-import { ISatelliteData } from "../../models/satellites";
+import { IStartSateDataWSatRec } from "../../models/satellites";
 
 const getPositionAVelicity = (
-  satellite: ISatelliteData,
+  satellite: IStartSateDataWSatRec,
   date: Date
 ): PositionAndVelocity | null => {
   if (!satellite.satrec) {

@@ -1,112 +1,177 @@
-//@ts-ignore
-import init, { test } from "crate";
-// import Go from "wasm_exec-ts";
 import {
   BufferAttribute,
   BufferGeometry,
+  Color,
+  DoubleSide,
   Points,
   PointsMaterial,
   Scene,
+  MeshPhongMaterial,
+  Mesh,
+  ShaderMaterial,
+  InstancedBufferGeometry,
+  Vector3,
+  Float32BufferAttribute,
+  InstancedBufferAttribute,
+  AdditiveBlending,
 } from "three";
-import { ISatelliteData } from "../../../../models/satellites";
+import { GUI } from "dat.gui";
+import { IStartSateData } from "../../../../models/satellites";
 import { getSatellites } from "../../../../services/satellites.service";
 import MyWorker from "../../../../workers/calculSatellitesPositions?worker";
 import Experience from "../../../Experience";
+import Debug from "../../../../utils/debug/Debug";
+import frag from "./frag.glsl?raw";
+import vert from "./vert.glsl?raw";
+
+interface setFilters {
+  orbit: null | "LEO" | "MEO" | "HEO";
+}
 
 export default class Satellites {
   private experience: Experience = new Experience();
+  private debugFolder: GUI | null = null;
+  private debug: Debug = this.experience.debug as Debug;
   private scene: Scene = this.experience.scene as Scene;
 
-  private satelittesTLEList: ISatelliteData[] = [];
+  private satelittesTLEList: IStartSateData[] = [];
   private isWaitingPos: Boolean = false;
   private material: PointsMaterial | null = null;
-  private geometry: BufferGeometry | null = null;
-  private satellites: Points | null = null;
+  private LEOGeometry: BufferGeometry | null = null;
+  private MEOGeometry: BufferGeometry | null = null;
+  private HEOGeometry: BufferGeometry | null = null;
+  private LEOSatellites: Points | null = null;
+  private MEOSatellites: Points | null = null;
+  private HEOSatellites: Points | null = null;
+  private liveMode = true;
+  private speed = 1;
+  private displayedSat: IStartSateData[] = [];
+  private filters: setFilters = { orbit: null };
+  private LEOvertices: Float32Array | null = null;
+  private MEOvertices: Float32Array | null = null;
+  private HEOvertices: Float32Array | null = null;
+  private PARAMS: any = {
+    ISSPosition: new Vector3(),
+    radiusFromEarth: 1,
+    instancesCount: 1,
+    spreadRatio: 0.05,
+    scaleMin: 10,
+    scaleMax: 10,
+    speed: 0.4,
+    blending: true,
+  };
 
   constructor() {
-    this.getAllSatellites().then(async () => {
+    if (this.debug.active) {
+      this.debugFolder = this.debug.ui!.addFolder("Satellites");
+      this.setDebug();
+    }
+    this.getSatellitesTLES().then(async () => {
       this.setGeometry();
       this.setMaterial();
-      this.initPos();
+      // this.getSatPositionsFromTLE(true);
+      this.test();
     });
   }
 
   update() {
-    this.updatePos();
+    if (this.liveMode && !this.isWaitingPos) this.getSatPositionsFromTLE(false);
   }
   setGeometry() {
-    this.geometry = new BufferGeometry();
+    this.LEOGeometry = new BufferGeometry();
+    this.MEOGeometry = new BufferGeometry();
+    this.HEOGeometry = new BufferGeometry();
   }
   setMaterial() {
     this.material = new PointsMaterial({ color: 0xffffff, size: 400 });
   }
 
-  async getAllSatellites() {
+  async getSatellitesTLES() {
     try {
       await getSatellites().then((TLELines) => {
         if (TLELines != null) {
           this.satelittesTLEList = TLELines;
+          this.displayedSat = TLELines;
         }
       });
     } catch (error) {}
   }
 
-  initPos() {
+  test() {
+    const satnum = 1
+    const geometry = new InstancedBufferGeometry();
+    geometry.instanceCount = satnum;
+    geometry.setAttribute("position", new Float32BufferAttribute([0, 0, 0], 3));
+    const material = new ShaderMaterial({
+      vertexShader: vert,
+      fragmentShader: frag,
+    });
+    const mesh = new Points(geometry, material);
+    this.scene.add(mesh);
+  }
+
+  getSatPositionsFromTLE(isInit: boolean) {
     if (window.Worker && this.experience.time) {
-      console.log(this.satelittesTLEList[0]);
-      const date = Math.round(
-        new Date(
-          this.experience.time.start + this.experience.time.elapsed * 500
-        ).getTime() / 1000
-      );
-      console.log(this.satelittesTLEList.length);
-      const goMessage = {
-        snumber: this.satelittesTLEList.length.toString(),
-        date: date.toString(),
-        tles: [this.satelittesTLEList[0]],
-      };
-      // const goMessage = [date, [this.satelittesTLEList[0]]];
-
-      console.log(goMessage);
-      const getRes = async () => {
-        //@ts-ignore
-        if (getDate != undefined) {
-          //@ts-ignore
-          const res = await getDate(goMessage);
-          console.log(res);
-        }
-      };
-      getRes();
-      // const message2 = {
-      //   tles: this.satelittesTLEList,
-      //   date: Math.floor(
-      //     (this.experience.time?.start +
-      //       this.experience.time.elapsed / 1000 / 60) <<
-      //       0
-      //   ),
-      // };
       const message = [
-        this.satelittesTLEList,
-        new Date(this.experience.time?.start + this.experience.time.elapsed),
+        this.displayedSat,
+        new Date(
+          this.experience.time?.start +
+            this.experience.time.elapsed * this.speed
+        ),
+        this.filters,
       ];
-
-      // init().then(() => {
-      //   // console.log(test(message2 as any));
-      //   // crate(message2 as any);
-      //   test();
-      // });
       const worker = new MyWorker();
-
       this.isWaitingPos = true;
       worker.postMessage(message);
       worker.onmessage = (e: any) => {
-        if (this.geometry && this.material) {
-          this.geometry.setAttribute(
-            "position",
-            new BufferAttribute(e.data.vertices, 3)
-          );
-          this.satellites = new Points(this.geometry, this.material);
-          this.scene.add(this.satellites);
+        this.LEOvertices = e.data.LEOvertices;
+        this.MEOvertices = e.data.MEOvertices;
+        this.HEOvertices = e.data.HEOvertices;
+        if (this.material) {
+          if (isInit) {
+            // Init mode
+            if (this.LEOGeometry && this.LEOvertices) {
+              this.LEOGeometry.setAttribute(
+                "position",
+                new BufferAttribute(this.LEOvertices, 3)
+              );
+              this.LEOSatellites = new Points(this.LEOGeometry, this.material);
+              this.scene.add(this.LEOSatellites);
+            }
+            if (this.MEOGeometry && this.MEOvertices) {
+              this.MEOGeometry.setAttribute(
+                "position",
+                new BufferAttribute(this.MEOvertices, 3)
+              );
+              this.MEOSatellites = new Points(this.MEOGeometry, this.material);
+              this.scene.add(this.MEOSatellites);
+            }
+            if (this.HEOGeometry && this.HEOvertices) {
+              this.HEOGeometry.setAttribute(
+                "position",
+                new BufferAttribute(this.HEOvertices, 3)
+              );
+              this.HEOSatellites = new Points(this.HEOGeometry, this.material);
+              this.scene.add(this.HEOSatellites);
+            }
+          } else {
+            // Update mode
+            if (this.LEOGeometry)
+              this.LEOGeometry.attributes.position = new BufferAttribute(
+                e.data.LEOvertices,
+                3
+              );
+            if (this.MEOGeometry)
+              this.MEOGeometry.attributes.position = new BufferAttribute(
+                e.data.MEOvertices,
+                3
+              );
+            if (this.HEOGeometry)
+              this.HEOGeometry.attributes.position = new BufferAttribute(
+                e.data.HEOvertices,
+                3
+              );
+          }
           this.isWaitingPos = false;
         }
         worker.terminate();
@@ -114,35 +179,14 @@ export default class Satellites {
     }
   }
 
-  updatePos() {
-    // const getSum = async () => {
-    //   //@ts-ignore
-    //   if (add != undefined) {
-    //     //@ts-ignore
-    //     const sum = await add(5, 5);
-    //     console.log("sum =", sum);
-    //   }
-    // };
-    // getSum();
-    if (!this.isWaitingPos && window.Worker && this.experience.time) {
-      const worker = new MyWorker();
-      const message = [
-        this.satelittesTLEList,
-        new Date(
-          this.experience.time.start + this.experience.time.elapsed * 500
-        ),
-      ];
-      this.isWaitingPos = true;
-      worker.postMessage(message);
-      worker.onmessage = (e: any) => {
-        if (this.geometry)
-          this.geometry.attributes.position = new BufferAttribute(
-            e.data.vertices,
-            3
-          );
-        this.isWaitingPos = false;
-        worker.terminate();
-      };
+  setDebug() {
+    if (this.debug.active) {
+      this.debugFolder
+        ?.add(this, "speed")
+        .name("Speed")
+        .min(1)
+        .max(1000)
+        .step(1);
     }
   }
 }

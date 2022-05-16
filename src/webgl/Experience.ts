@@ -28,7 +28,7 @@ export default class Experience {
 
   public scene: Scene | null = null;
   public camera: Camera | null = null;
-  private renderer: Renderer | null = null;
+  public renderer: Renderer | null = null;
   private world: World | null = null;
 
   constructor(_canvas?: HTMLCanvasElement) {
