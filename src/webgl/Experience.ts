@@ -1,14 +1,15 @@
 import { Scene } from "three";
 import { TCanvas } from "../models/global";
 import { ISource } from "../models/sources";
-import Debug from "../utils/debug/Debug";
-import Loaders from "../utils/Loaders";
+
 import Sizes from "../utils/Sizes";
 import Time from "../utils/Time";
 import Camera from "./Camera";
 import Renderer from "./Renderer";
-import Sources from "./scene/sources";
-import World from "./scene/World";
+import World from "./world/World";
+import Sources from "./world/sources";
+import Loaders from "../utils/Loaders";
+import Debug from "../utils/debug/Debug";
 
 declare global {
   interface Window {
@@ -28,8 +29,10 @@ export default class Experience {
 
   public scene: Scene | null = null;
   public camera: Camera | null = null;
-  public renderer: Renderer | null = null;
+  private renderer: Renderer | null = null;
   private world: World | null = null;
+
+  public targetDate: Date = new Date();
 
   constructor(_canvas?: HTMLCanvasElement) {
     // Singleton
@@ -56,12 +59,9 @@ export default class Experience {
 
     // Events
     this.sizes.on("resize", () => this.resize());
-    // this.time?.on("tickSatellite", () => this.world?.satellites?.update());
-
     this.time.on("tick", () => {
-      this.world?.update();
-      this.world?.satellites?.update();
       this.update();
+      this.world?.update();
     });
   }
 
@@ -71,6 +71,7 @@ export default class Experience {
   }
 
   update() {
+    this.targetDate = new Date()
     this.camera?.update();
     this.renderer?.update();
     this.debug?.update();

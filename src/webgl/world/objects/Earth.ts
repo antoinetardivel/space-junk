@@ -1,8 +1,8 @@
 import { GUI } from "dat.gui";
 import { earthRadius } from "satellite.js/lib/constants";
 import { Group, Mesh, MeshBasicMaterial, Scene, SphereGeometry } from "three";
-import Debug from "../../../utils/debug/Debug";
 import Experience from "../../Experience";
+import Debug from "../../../utils/debug/Debug";
 // import Loaders from '../../utils/Loaders';
 
 export default class Earth {
@@ -84,7 +84,9 @@ export default class Earth {
     }
   }
 
-  update() {}
+  update(){
+    
+  }
 
   destroy() {
     //     this.earthGroup?.geometry.dispose();
