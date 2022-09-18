@@ -2,7 +2,6 @@ import {
   BufferAttribute,
   BufferGeometry,
   Points,
-  PointsMaterial,
   Scene,
   ShaderMaterial,
 } from "three";
