@@ -41,9 +41,9 @@ export default class Satellites {
     const pourcentagePassedTime =
       ((this.time.current - this.lastUpdateTime) * 100) / this.prevDeltaTime;
     let normalizedTime = pourcentagePassedTime / 100;
-    if (Number.isFinite(normalizedTime) || normalizedTime > 1) {
-      normalizedTime = 1;
-    }
+    // if (Number.isFinite(normalizedTime) || normalizedTime > 1) {
+    //   normalizedTime = 1;
+    // }
     if (this.material) {
       this.material.uniforms.uInterPositionPourcentage.value = normalizedTime;
     }
