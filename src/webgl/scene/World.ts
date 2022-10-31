@@ -20,6 +20,7 @@ export default class World {
   }
   update() {
     this.satellites?.update();
+    this.earth?.update();
   }
   destroy() {
     this.lights?.destroy();

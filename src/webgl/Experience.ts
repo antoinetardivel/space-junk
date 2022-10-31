@@ -29,7 +29,7 @@ export default class Experience {
   public scene: Scene | null = null;
   public camera: Camera | null = null;
   public renderer: Renderer | null = null;
-  private world: World | null = null;
+  public world: World | null = null;
 
   constructor(_canvas?: HTMLCanvasElement) {
     // Singleton

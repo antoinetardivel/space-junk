@@ -27,7 +27,7 @@ export default class Satellites {
   private debug: Debug = this.experience.debug as Debug;
   private scene: Scene = this.experience.scene as Scene;
 
-  // private satelittesTLEList: IStartSateData[] = [];
+  private satelittesTLEList: IStartSateData[] = [];
   private isWaitingPos: Boolean = false;
   private material: PointsMaterial | null = null;
   private LEOGeometry: BufferGeometry | null = null;
@@ -43,6 +43,7 @@ export default class Satellites {
   private LEOvertices: Float32Array | null = null;
   private MEOvertices: Float32Array | null = null;
   private HEOvertices: Float32Array | null = null;
+  private mesh: Points | null = null;
   // private PARAMS: any = {
   //   ISSPosition: new Vector3(),
   //   radiusFromEarth: 1,
@@ -62,28 +63,31 @@ export default class Satellites {
     this.getSatellitesTLES().then(async () => {
       this.setGeometry();
       this.setMaterial();
-      // this.getSatPositionsFromTLE(true);
+      this.getSatPositionsFromTLE(true);
       this.test();
     });
   }
 
   update() {
-    if (this.liveMode && !this.isWaitingPos) this.getSatPositionsFromTLE(false);
+    if (this.liveMode && !this.isWaitingPos) {
+      this.getSatPositionsFromTLE(false);
+    }
   }
+
   setGeometry() {
     this.LEOGeometry = new BufferGeometry();
     this.MEOGeometry = new BufferGeometry();
     this.HEOGeometry = new BufferGeometry();
   }
   setMaterial() {
-    this.material = new PointsMaterial({ color: 0xffffff, size: 400 });
+    this.material = new PointsMaterial({ color: 0xffffff, size: 100 });
   }
 
   async getSatellitesTLES() {
     try {
       await getSatellites().then((TLELines) => {
         if (TLELines != null) {
-          // this.satelittesTLEList = TLELines;
+          this.satelittesTLEList = TLELines;
           this.displayedSat = TLELines;
         }
       });
@@ -91,7 +95,7 @@ export default class Satellites {
   }
 
   test() {
-    const satnum = 1
+    const satnum = 1;
     const geometry = new InstancedBufferGeometry();
     geometry.instanceCount = satnum;
     geometry.setAttribute("position", new Float32BufferAttribute([0, 0, 0], 3));
@@ -99,8 +103,8 @@ export default class Satellites {
       vertexShader: vert,
       fragmentShader: frag,
     });
-    const mesh = new Points(geometry, material);
-    this.scene.add(mesh);
+    this.mesh = new Points(geometry, material);
+    this.scene.add(this.mesh);
   }
 
   getSatPositionsFromTLE(isInit: boolean) {
@@ -113,6 +117,7 @@ export default class Satellites {
         ),
         this.filters,
       ];
+
       const worker = new MyWorker();
       this.isWaitingPos = true;
       worker.postMessage(message);
@@ -164,6 +169,24 @@ export default class Satellites {
                 e.data.HEOvertices,
                 3
               );
+          }
+          if (
+            this.experience.time &&
+            this.LEOSatellites &&
+            this.MEOSatellites &&
+            this.HEOSatellites
+          ) {
+            const oneTour = Math.PI * 2;
+            const twentyFourhours = 1000 * 60 * 60 * 24;
+            const rotation =
+              (((oneTour * this.experience.time.elapsed) / twentyFourhours) *
+                this.speed) /
+              twentyFourhours;
+
+            this.LEOSatellites.rotateY(rotation);
+            this.MEOSatellites.rotateY(rotation);
+            this.HEOSatellites.rotateY(rotation);
+            this.experience.world?.earth?.earthGroup?.rotateY(rotation);
           }
           this.isWaitingPos = false;
         }

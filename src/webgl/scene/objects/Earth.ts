@@ -20,7 +20,7 @@ export default class Earth {
   private globeMaterial: MeshBasicMaterial | null = null;
   private globeMesh: Mesh | null = null;
 
-  private earthGroup: Group | null = null;
+  public earthGroup: Group | null = null;
 
   constructor() {
     if (this.debug.active) {
