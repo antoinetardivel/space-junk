@@ -27,7 +27,8 @@ export default class Satellites {
   private debug: Debug = this.experience.debug as Debug;
   private scene: Scene = this.experience.scene as Scene;
 
-  private satelittesTLEList: IStartSateData[] = [];
+  public satelittesTLEList: IStartSateData[] = [];
+  //TODO: pass to private
   private isWaitingPos: Boolean = false;
   private material: PointsMaterial | null = null;
   private LEOGeometry: BufferGeometry | null = null;
